@@ -22,7 +22,7 @@ public class Cliente {
         this.endereco = endereco;
     }
 
-    private static boolean isCpfCnpjValid(String CPF_CNPJ){
+    private boolean isCpfCnpjValid(String CPF_CNPJ){
         if (CPF_CNPJ.length() < 8){
             return false;
         }
@@ -32,7 +32,7 @@ public class Cliente {
         return true;
     }
 
-    private static boolean isNomeValid(String nome){
+    private boolean isNomeValid(String nome){
         if (nome.length() < 3 || nome.length() > 50){
             return false;
         }
@@ -42,7 +42,7 @@ public class Cliente {
         return true;
     }
 
-    private static boolean isEnderecoValid(String endereco){
+    private boolean isEnderecoValid(String endereco){
         if (endereco.length() > 30){
             return false;
         }
