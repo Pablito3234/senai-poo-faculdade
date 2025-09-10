@@ -7,13 +7,13 @@ public class Cliente {
     private String endereco;
 
     public Cliente(String CPF_CNPJ, String nome, String email, String endereco) {
-        if (isCpfCnpjValid(CPF_CNPJ)){
+        if (!isCpfCnpjValid(CPF_CNPJ)){
             throw new IllegalArgumentException("CPF ou CNPJ inválido");
         }
-        if (isNomeValid(nome)){
+        if (!isNomeValid(nome)){
             throw new IllegalArgumentException("Nome inválido");
         }
-        if (isEnderecoValid(endereco)){
+        if (!isEnderecoValid(endereco)){
             throw new IllegalArgumentException("Endereço Inválido");
         }
         this.CPF_CNPJ = CPF_CNPJ;
@@ -50,5 +50,21 @@ public class Cliente {
             return false;
         }
         return true;
+    }
+
+    public String getCPF_CNPJ() {
+        return CPF_CNPJ;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getEndereco() {
+        return endereco;
     }
 }

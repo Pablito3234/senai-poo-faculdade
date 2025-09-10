@@ -1,5 +1,6 @@
 package menu;
 
+import entidades.Cliente;
 import entidades.Produto;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ public class OperacoesObjetos {
         this.bancoObjetos = new BancoObjetos();
     }
 
+    //operacoes produtos
     private Produto inputProdutoUsuario(){
         while (true) {
             try {
@@ -116,5 +118,69 @@ public class OperacoesObjetos {
         }
     }
 
+    //operacoes cliente
+    private static char INPUT_AFIRMATIVO = 's';
+    private static char INPUT_NEGATIVO = 'n';
+    private Cliente inputClienteUsuario(){
+        while (true) {
+            try {
+                System.out.println("Digite um CPF ou CNPJ");
+                String cpfCnpj = entrada.nextLine();
+
+                System.out.println("Digite um nome");
+                String nome = entrada.nextLine();
+
+                String email = "";
+                while (true){
+                    System.out.println("""
+                        Tem email
+                        [S] Sim
+                        [N] Não
+                        """);
+                    String opcaoEmail = entrada.nextLine();
+                    char opcaoEmailChar = opcaoEmail.charAt(0);
+
+                    if (opcaoEmailChar == INPUT_AFIRMATIVO){
+                        System.out.println("Digite o email");
+                        email = entrada.nextLine();
+                        break;
+                    }
+                    if (opcaoEmailChar == INPUT_NEGATIVO){
+                        System.out.println("OK");
+                        break;
+                    }
+                    System.out.println("Opção Inválida");
+                }
+
+                System.out.println("Digite um endereço completo");
+                String endereco = entrada.nextLine();
+
+                return new Cliente(cpfCnpj, nome, email, endereco);
+            } catch (IllegalArgumentException exception) {
+                System.out.println(exception.getMessage());
+            }
+        }
+    }
+
+    public void criarCliente() {
+        Cliente inputCliente = inputClienteUsuario();
+        bancoObjetos.adicionarCliente(inputCliente);
+    }
+
+    public void listarClientes() {
+        System.out.println("Lista de clientes:\n");
+        ArrayList<Cliente> clientes = bancoObjetos.getClientes();
+
+        System.out.printf("%-20s %-30s %-30s %-60s\n", "CPF/CNPJ", "Nome", "Email", "Endereco");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
+
+        for (Cliente cliente : clientes) {
+            System.out.printf("%-20s %-30s %-30s %-60s\n",
+                    cliente.getCPF_CNPJ(),
+                    cliente.getNome(),
+                    cliente.getEmail(),
+                    cliente.getEndereco());
+        }
+    }
 
 }
