@@ -1,6 +1,5 @@
 package menu;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Principal {
@@ -46,7 +45,7 @@ public class Principal {
                     opcoesCrudCliente();
                     break;
                 case MENU_ESTOQUE:
-                    System.out.println("Menu em construção");
+                    opcoesEstoque();
                     break;
                 case MENU_VENDAS:
                     System.out.println("Menu em construção");

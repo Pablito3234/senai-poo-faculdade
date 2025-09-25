@@ -31,7 +31,8 @@ public class BancoObjetos {
         produtos.remove(index);
     }
 
-    public void editarProduto(int index, Produto produto){
+    public void editarProduto(int codProduto, Produto produto){
+        int index = this.produtos.indexOf(getProdutoById(codProduto));
         produtos.set(index, produto);
     }
 

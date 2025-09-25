@@ -23,13 +23,17 @@ public class OperacoesObjetos {
             try {
                 System.out.println("Digite um preco");
                 Float preco = entrada.nextFloat();
+                entrada.nextLine();
 
                 System.out.println("Digite um nome");
                 String nome = entrada.next();
+                entrada.nextLine();
 
                 return new Produto(preco, nome, gerarCodigoProduto());
             } catch (IllegalArgumentException exception) {
                 System.out.println(exception.getMessage());
+            } catch (InputMismatchException e) {
+                System.err.println("Entrada Invalida");
             }
         }
     }
@@ -40,14 +44,8 @@ public class OperacoesObjetos {
     }
 
     public void editarProduto(){
-        while (true){
-            int inputIndex = verificarProdutoExistente();
-            if (inputIndex == -1){
-                continue;
-            }
-            bancoObjetos.editarProduto(inputIndex, inputProdutoUsuario());
-            break;
-        }
+        int inputCodProduto = verificarProdutoExistente();
+        bancoObjetos.editarProduto(inputCodProduto, inputProdutoUsuario());
     }
 
     public void listarProdutos() {
@@ -97,25 +95,25 @@ public class OperacoesObjetos {
     }
 
     private int verificarProdutoExistente() {
-        int invalido = -1;
-        try {
-            System.out.println("Digite um código de produto");
-            int inputCodigo = entrada.nextInt();
+        while (true){
+            try {
+                System.out.println("Digite um código de produto");
+                int inputCodigo = entrada.nextInt();
+                entrada.nextLine();
 
-            if (bancoObjetos.getProdutos().isEmpty()) {
-                System.err.println("Não existe nenhum produto registrado");
-                return invalido;
+                if (bancoObjetos.getProdutos().isEmpty()) {
+                    System.err.println("Não existe nenhum produto registrado");
+                    continue;
+                }
+
+                if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
+                    System.err.println("Produto não existe");
+                    continue;
+                }
+                return inputCodigo;
+            } catch (InputMismatchException e) {
+                System.err.println("Entrada inválida");
             }
-
-            if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
-                System.err.println("Produto não existe");
-                return invalido;
-            }
-
-            return inputCodigo;
-        } catch (InputMismatchException exception) {
-            System.err.println("Entrada inválida");
-            return invalido;
         }
     }
 
@@ -126,10 +124,10 @@ public class OperacoesObjetos {
         while (true) {
             try {
                 System.out.println("Digite um CPF ou CNPJ");
-                String cpfCnpj = entrada.nextLine();
+                String cpfCnpj = entrada.next();
 
                 System.out.println("Digite um nome");
-                String nome = entrada.nextLine();
+                String nome = entrada.next();
 
                 String email = "";
                 while (true){
@@ -138,12 +136,12 @@ public class OperacoesObjetos {
                         [S] Sim
                         [N] Não
                         """);
-                    String opcaoEmail = entrada.nextLine();
+                    String opcaoEmail = entrada.next().toLowerCase();
                     char opcaoEmailChar = opcaoEmail.charAt(0);
 
                     if (opcaoEmailChar == INPUT_AFIRMATIVO){
                         System.out.println("Digite o email");
-                        email = entrada.nextLine();
+                        email = entrada.next();
                         break;
                     }
                     if (opcaoEmailChar == INPUT_NEGATIVO){
@@ -154,7 +152,7 @@ public class OperacoesObjetos {
                 }
 
                 System.out.println("Digite um endereço completo");
-                String endereco = entrada.nextLine();
+                String endereco = entrada.next();
 
                 return new Cliente(cpfCnpj, nome, email, endereco);
             } catch (IllegalArgumentException exception) {

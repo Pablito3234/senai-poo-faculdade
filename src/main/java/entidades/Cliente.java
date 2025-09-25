@@ -8,13 +8,13 @@ public class Cliente {
 
     public Cliente(String CPF_CNPJ, String nome, String email, String endereco) {
         if (!isCpfCnpjValid(CPF_CNPJ)){
-            throw new IllegalArgumentException("CPF ou CNPJ inválido");
+            throw new IllegalArgumentException("CPF ou CNPJ inválido, deve ser igual ou maior que 8 caracteres");
         }
         if (!isNomeValid(nome)){
-            throw new IllegalArgumentException("Nome inválido");
+            throw new IllegalArgumentException("Nome inválido, deve ser entre 3 e 50 caracteres");
         }
         if (!isEnderecoValid(endereco)){
-            throw new IllegalArgumentException("Endereço Inválido");
+            throw new IllegalArgumentException("Endereço Inválido, deve ser de 30 caracteres pra frente");
         }
         this.CPF_CNPJ = CPF_CNPJ;
         this.nome = nome;
@@ -26,9 +26,6 @@ public class Cliente {
         if (CPF_CNPJ.length() < 8){
             return false;
         }
-        if (CPF_CNPJ.isEmpty()){
-            return false;
-        }
         return true;
     }
 
@@ -36,17 +33,11 @@ public class Cliente {
         if (nome.length() < 3 || nome.length() > 50){
             return false;
         }
-        if (nome.isEmpty()){
-            return false;
-        }
         return true;
     }
 
     private boolean isEnderecoValid(String endereco){
         if (endereco.length() > 30){
-            return false;
-        }
-        if (endereco.isEmpty()){
             return false;
         }
         return true;
