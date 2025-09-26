@@ -27,13 +27,22 @@ public class BancoObjetos {
         produtos.add(produto);
     }
 
-    public void deletarProduto(int index){
-        produtos.remove(index);
+    public void deletarProduto(int codProduto){
+        try {
+            int index = this.produtos.indexOf(getProdutoById(codProduto));
+            produtos.remove(index);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Erro tentando deletar o produto no banco:" + e.getMessage());
+        }
     }
 
     public void editarProduto(int codProduto, Produto produto){
-        int index = this.produtos.indexOf(getProdutoById(codProduto));
-        produtos.set(index, produto);
+        try {
+            int index = this.produtos.indexOf(getProdutoById(codProduto));
+            produtos.set(index, produto);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Erro tentando editar o produto no banco:" + e.getMessage());
+        }
     }
 
     public ArrayList<Produto> getProdutos(){

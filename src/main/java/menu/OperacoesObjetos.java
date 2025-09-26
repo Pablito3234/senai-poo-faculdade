@@ -34,6 +34,7 @@ public class OperacoesObjetos {
                 System.out.println(exception.getMessage());
             } catch (InputMismatchException e) {
                 System.err.println("Entrada Invalida");
+                entrada.nextLine();
             }
         }
     }
@@ -41,11 +42,13 @@ public class OperacoesObjetos {
     public void criarProduto() {
         Produto produtoUsuario = inputProdutoUsuario();
         bancoObjetos.adicionarProduto(produtoUsuario);
+        System.out.println("Sucesso");
     }
 
     public void editarProduto(){
         int inputCodProduto = verificarProdutoExistente();
         bancoObjetos.editarProduto(inputCodProduto, inputProdutoUsuario());
+        System.out.println("Sucesso");
     }
 
     public void listarProdutos() {
@@ -71,13 +74,12 @@ public class OperacoesObjetos {
     }
 
     public void deletarProduto(){
-        while (true){
-            int inputIndex = verificarProdutoExistente();
-            if (inputIndex == -1){
-                continue;
-            }
-            bancoObjetos.deletarProduto(inputIndex);
-            break;
+        try {
+            Integer inputCodigoProduto = inputCodigoProduto();
+            bancoObjetos.deletarProduto(inputCodigoProduto);
+            System.out.println("Sucesso");
+        } catch (NullPointerException e) {
+            System.err.println(e.getMessage());
         }
     }
 
@@ -113,13 +115,11 @@ public class OperacoesObjetos {
                 return inputCodigo;
             } catch (InputMismatchException e) {
                 System.err.println("Entrada inválida");
+                entrada.nextLine();
             }
         }
     }
 
-    //operacoes cliente
-    private static char INPUT_AFIRMATIVO = 's';
-    private static char INPUT_NEGATIVO = 'n';
     private Cliente inputClienteUsuario(){
         while (true) {
             try {
@@ -139,11 +139,14 @@ public class OperacoesObjetos {
                     String opcaoEmail = entrada.next().toLowerCase();
                     char opcaoEmailChar = opcaoEmail.charAt(0);
 
+                    //operacoes cliente
+                    final char INPUT_AFIRMATIVO = 's';
                     if (opcaoEmailChar == INPUT_AFIRMATIVO){
                         System.out.println("Digite o email");
                         email = entrada.next();
                         break;
                     }
+                    final char INPUT_NEGATIVO = 'n';
                     if (opcaoEmailChar == INPUT_NEGATIVO){
                         System.out.println("OK");
                         break;
@@ -164,6 +167,7 @@ public class OperacoesObjetos {
     public void criarCliente() {
         Cliente inputCliente = inputClienteUsuario();
         bancoObjetos.adicionarCliente(inputCliente);
+        System.out.println("Sucesso");
     }
 
     public void listarClientes() {
@@ -188,17 +192,18 @@ public class OperacoesObjetos {
             try {
                 System.out.println("Digite um código de produto");
                 int inputUsuario = entrada.nextInt();
-                Integer inputUsuarioInteger = (Integer) inputUsuario;
+                entrada.nextLine();
+                Integer inputUsuarioInteger = inputUsuario;
                 if (!bancoObjetos.existeCodigoPrduto(inputUsuarioInteger)){
                     System.err.println("Codigo não existe no banco");
-                    break;
+                    continue;
                 }
                 return inputUsuarioInteger;
             } catch (InputMismatchException exception) {
                 System.err.println("Entrada invalida");
+                entrada.nextLine();
             }
         }
-        return null;
     }
 
     private Integer inputQuantidade(){
@@ -206,14 +211,15 @@ public class OperacoesObjetos {
             try {
                 System.out.println("Digite a quantidade do produto");
                 int inputUsuario = entrada.nextInt();
-                Integer inputUsuarioInteger = (Integer) inputUsuario;
-                if (inputUsuarioInteger < 0){
+                entrada.nextLine();
+                if (inputUsuario < 0){
                     System.err.println("Valor não pode ser menor que zero");
                     continue;
                 }
-                return inputUsuarioInteger;
+                return inputUsuario;
             } catch (InputMismatchException exception) {
                 System.err.println("Entrada invalida");
+                entrada.nextLine();
             }
         }
     }
@@ -272,7 +278,7 @@ public class OperacoesObjetos {
             } else {
                 Estoque estoqueEditado = new Estoque(bancoObjetos.getProdutoById(entradaUsuarioCodProduto), entradaUsuarioQuantidade);
                 bancoObjetos.updateQuantidade(entradaUsuarioQuantidade, bancoObjetos.getProdutoById(entradaUsuarioCodProduto));
-                System.out.println("Estoque criado com sucesso");
+                System.out.println("Estoque editado com sucesso");
             }
         }
     }
