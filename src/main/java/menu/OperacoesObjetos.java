@@ -17,6 +17,30 @@ public class OperacoesObjetos {
         this.bancoObjetos = new BancoObjetos();
     }
 
+    //funcoes comuns
+    private int inputCodigoProdutoExistente() {
+        try {
+            System.out.println("Digite um código de produto");
+            int inputCodigo = entrada.nextInt();
+            entrada.nextLine();
+
+            if (bancoObjetos.getProdutos().isEmpty()) {
+                System.err.println("Não existe nenhum produto registrado");
+                return -1;
+            }
+
+            if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
+                System.err.println("Produto não existe");
+                return -1;
+            }
+            return inputCodigo;
+        } catch (InputMismatchException e) {
+            System.err.println("Entrada inválida");
+            entrada.nextLine();
+            return -1;
+        }
+    }
+
     //operacoes produtos
     private Produto inputProdutoUsuario(){
         while (true) {
@@ -88,9 +112,11 @@ public class OperacoesObjetos {
 
     public void deletarProduto(){
         try {
-            Integer inputCodigoProduto = inputCodigoProduto();
-            bancoObjetos.deletarProduto(inputCodigoProduto);
-            System.out.println("Sucesso");
+            int inputCodigoProduto = inputCodigoProdutoExistente();
+            if (inputCodigoProduto != -1) {
+                bancoObjetos.deletarProduto(inputCodigoProduto);
+                System.out.println("Sucesso");
+            }
         } catch (NullPointerException e) {
             System.err.println(e.getMessage());
         }
@@ -109,29 +135,7 @@ public class OperacoesObjetos {
         return codigo;
     }
 
-    private int inputCodigoProdutoExistente() {
-        try {
-            System.out.println("Digite um código de produto");
-            int inputCodigo = entrada.nextInt();
-            entrada.nextLine();
-
-            if (bancoObjetos.getProdutos().isEmpty()) {
-                System.err.println("Não existe nenhum produto registrado");
-                return -1;
-            }
-
-            if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
-                System.err.println("Produto não existe");
-                return -1;
-            }
-            return inputCodigo;
-        } catch (InputMismatchException e) {
-            System.err.println("Entrada inválida");
-            entrada.nextLine();
-            return -1;
-        }
-    }
-
+    //operacoes cliente
     private Cliente inputClienteUsuario(){
         while (true) {
             try {
@@ -199,25 +203,6 @@ public class OperacoesObjetos {
     }
 
     // Operacoes Estoque
-    private Integer inputCodigoProduto(){
-        while (true){
-            try {
-                System.out.println("Digite um código de produto");
-                int inputUsuario = entrada.nextInt();
-                entrada.nextLine();
-                Integer inputUsuarioInteger = inputUsuario;
-                if (!bancoObjetos.existeCodigoPrduto(inputUsuarioInteger)){
-                    System.err.println("Codigo não existe no banco");
-                    continue;
-                }
-                return inputUsuarioInteger;
-            } catch (InputMismatchException exception) {
-                System.err.println("Entrada invalida");
-                entrada.nextLine();
-            }
-        }
-    }
-
     private Integer inputQuantidade(){
         while (true){
             try {
@@ -240,28 +225,32 @@ public class OperacoesObjetos {
         if (bancoObjetos.getProdutos().isEmpty()){
             System.err.println("Não existem produtos, crie um!");
         } else {
-            Integer entradaUsuarioCodProduto = inputCodigoProduto();
+            Integer entradaUsuarioCodProduto = inputCodigoProdutoExistente();
             Integer entradaUsuarioQuantidade = inputQuantidade();
-            if (bancoObjetos.existeEstoque(entradaUsuarioCodProduto)){
-                System.out.println("Produto ja existe no sistema (use a funcionalidade de editar)");
-            } else {
-                bancoObjetos.criarEstoque(entradaUsuarioQuantidade, bancoObjetos.getProdutoById(entradaUsuarioCodProduto));
-                System.out.println("Estoque criado com sucesso");
+            if (entradaUsuarioCodProduto != -1) {
+                if (bancoObjetos.existeEstoque(entradaUsuarioCodProduto)){
+                    System.out.println("Produto ja existe no sistema (use a funcionalidade de editar)");
+                } else {
+                    bancoObjetos.criarEstoque(entradaUsuarioQuantidade, bancoObjetos.getProdutoById(entradaUsuarioCodProduto));
+                    System.out.println("Estoque criado com sucesso");
+                }
             }
         }
     }
 
     public void quantidadeProduto(){
-        Integer entradaUsuarioCodProduto = inputCodigoProduto();
-        if (!bancoObjetos.existeEstoque(entradaUsuarioCodProduto)){
-            System.err.println("Não existe quantidade estoque declarado para este produto");
-        } else {
-            String nomeProduto = bancoObjetos.getProdutoById(entradaUsuarioCodProduto).getNome();
-            Integer quantidade = bancoObjetos.getQuantidadeProduto(entradaUsuarioCodProduto);
-            System.out.printf("""
-                    Nome do produto: %s
-                    Quantidade: %d
-                    """, nomeProduto, quantidade);
+        Integer entradaUsuarioCodProduto = inputCodigoProdutoExistente();
+        if (entradaUsuarioCodProduto != -1) {
+            if (!bancoObjetos.existeEstoque(entradaUsuarioCodProduto)){
+                System.err.println("Não existe quantidade estoque declarado para este produto");
+            } else {
+                String nomeProduto = bancoObjetos.getProdutoById(entradaUsuarioCodProduto).getNome();
+                Integer quantidade = bancoObjetos.getQuantidadeProduto(entradaUsuarioCodProduto);
+                System.out.printf("""
+                        Nome do produto: %s
+                        Quantidade: %d
+                        """, nomeProduto, quantidade);
+            }
         }
     }
 
@@ -283,14 +272,16 @@ public class OperacoesObjetos {
         if (bancoObjetos.getProdutos().isEmpty()){
             System.err.println("Não existem produtos, crie um!");
         } else {
-            Integer entradaUsuarioCodProduto = inputCodigoProduto();
-            Integer entradaUsuarioQuantidade = inputQuantidade();
-            if (!bancoObjetos.existeEstoque(entradaUsuarioCodProduto)) {
-                System.out.println("Produto não existe no sistema (use a funcionalidade de criar)");
-            } else {
-                Estoque estoqueEditado = new Estoque(bancoObjetos.getProdutoById(entradaUsuarioCodProduto), entradaUsuarioQuantidade);
-                bancoObjetos.updateQuantidade(entradaUsuarioQuantidade, bancoObjetos.getProdutoById(entradaUsuarioCodProduto));
-                System.out.println("Estoque editado com sucesso");
+            Integer entradaUsuarioCodProduto = inputCodigoProdutoExistente();
+            if (entradaUsuarioCodProduto != -1) {
+                Integer entradaUsuarioQuantidade = inputQuantidade();
+                if (!bancoObjetos.existeEstoque(entradaUsuarioCodProduto)) {
+                    System.out.println("Produto não existe no sistema (use a funcionalidade de criar)");
+                } else {
+                    Estoque estoqueEditado = new Estoque(bancoObjetos.getProdutoById(entradaUsuarioCodProduto), entradaUsuarioQuantidade);
+                    bancoObjetos.updateQuantidade(entradaUsuarioQuantidade, bancoObjetos.getProdutoById(entradaUsuarioCodProduto));
+                    System.out.println("Estoque editado com sucesso");
+                }
             }
         }
     }
