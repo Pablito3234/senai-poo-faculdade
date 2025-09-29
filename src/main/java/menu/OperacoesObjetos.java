@@ -45,10 +45,23 @@ public class OperacoesObjetos {
         System.out.println("Sucesso");
     }
 
-    public void editarProduto(){
-        int inputCodProduto = verificarProdutoExistente();
-        bancoObjetos.editarProduto(inputCodProduto, inputProdutoUsuario());
-        System.out.println("Sucesso");
+//    public void editarProduto(){
+//        int inputCodProduto = verificarProdutoExistente();
+//        bancoObjetos.editarProduto(inputCodProduto, inputProdutoUsuario());
+//        System.out.println("Sucesso");
+//    }
+
+    public void buscarProduto(){
+        int entradaCodigo = inputCodigoProdutoExistente();
+        if (entradaCodigo != -1){
+            Produto produtoAchado = bancoObjetos.getProdutoById(entradaCodigo);
+            System.out.printf("""
+                O produto achado é:
+                Codigo: %d
+                Nome: %s
+                Preço: %.2f
+                """, produtoAchado.getCodigoProduto(), produtoAchado.getNome(), produtoAchado.getPreco());
+        }
     }
 
     public void listarProdutos() {
@@ -96,27 +109,26 @@ public class OperacoesObjetos {
         return codigo;
     }
 
-    private int verificarProdutoExistente() {
-        while (true){
-            try {
-                System.out.println("Digite um código de produto");
-                int inputCodigo = entrada.nextInt();
-                entrada.nextLine();
+    private int inputCodigoProdutoExistente() {
+        try {
+            System.out.println("Digite um código de produto");
+            int inputCodigo = entrada.nextInt();
+            entrada.nextLine();
 
-                if (bancoObjetos.getProdutos().isEmpty()) {
-                    System.err.println("Não existe nenhum produto registrado");
-                    continue;
-                }
-
-                if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
-                    System.err.println("Produto não existe");
-                    continue;
-                }
-                return inputCodigo;
-            } catch (InputMismatchException e) {
-                System.err.println("Entrada inválida");
-                entrada.nextLine();
+            if (bancoObjetos.getProdutos().isEmpty()) {
+                System.err.println("Não existe nenhum produto registrado");
+                return -1;
             }
+
+            if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
+                System.err.println("Produto não existe");
+                return -1;
+            }
+            return inputCodigo;
+        } catch (InputMismatchException e) {
+            System.err.println("Entrada inválida");
+            entrada.nextLine();
+            return -1;
         }
     }
 

@@ -16,6 +16,7 @@ public class Principal {
     private static final char OPCAO_DELETAR = 'd';
     private static final char OPCAO_EDITAR = 'e';
     private static final char OPCAO_QUANTIDADE = 'q';
+    private static final char OPCAO_BUSCAR = 'b';
 
     public static void main(String[] args) {
         menuPrincipal();
@@ -61,10 +62,10 @@ public class Principal {
     private static void opcoesCrudProduto() {
         System.out.println("""
                 Digite uma opção
-                [C]: Criar
-                [L]: Listar
-                [E]: Editar Produto
-                [D]: Deletar
+                [C]: Criar novo produto
+                [L]: Listar todos os produtos
+                [B]: Buscar Produto (por codigo de produto)
+                [D]: Deletar um produto (pelo codigo de produto)
                 [Qualquer outra coisa]: Voltar
                 """);
         String opcao = entrada.nextLine().toLowerCase();
@@ -74,8 +75,8 @@ public class Principal {
             case OPCAO_CRIAR:
                 operacoes.criarProduto();
                 break;
-            case OPCAO_EDITAR:
-                operacoes.editarProduto();
+            case OPCAO_BUSCAR:
+                operacoes.buscarProduto();
                 break;
             case OPCAO_LISTAR:
                 operacoes.listarProdutos();

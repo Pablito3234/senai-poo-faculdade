@@ -39,6 +39,10 @@ public class Produto {
         return nome;
     }
 
+    public void setCodigoProduto(Integer codigoProduto) {
+        this.codigoProduto = codigoProduto;
+    }
+
     public Float getPreco() {
         return preco;
     }

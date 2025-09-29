@@ -36,14 +36,15 @@ public class BancoObjetos {
         }
     }
 
-    public void editarProduto(int codProduto, Produto produto){
-        try {
-            int index = this.produtos.indexOf(getProdutoById(codProduto));
-            produtos.set(index, produto);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Erro tentando editar o produto no banco:" + e.getMessage());
-        }
-    }
+//    public void editarProduto(int codProduto, Produto produto){
+//        try {
+//            produto.setCodigoProduto(codProduto);
+//            int index = this.produtos.indexOf(getProdutoById(codProduto));
+//            produtos.set(index, produto);
+//        } catch (IndexOutOfBoundsException e) {
+//            System.err.println("Erro tentando editar o produto no banco:" + e.getMessage());
+//        }
+//    }
 
     public ArrayList<Produto> getProdutos(){
         return produtos;
