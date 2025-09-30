@@ -89,36 +89,44 @@ public class OperacoesObjetos {
     }
 
     public void listarProdutos() {
-        System.out.println("Lista de produtos:\n");
+        if (!bancoObjetos.getProdutos().isEmpty()) {
+            System.out.println("Lista de produtos:\n");
 
-        // Recupera a lista de produtos
-        ArrayList<Produto> produtos = bancoObjetos.getProdutos();
+            // Recupera a lista de produtos
+            ArrayList<Produto> produtos = bancoObjetos.getProdutos();
 
-        // Cabeçalho da tabela
-        System.out.printf("%-10s %-30s %-10s\n", "Código", "Nome", "Preço");
+            // Cabeçalho da tabela
+            System.out.printf("%-10s %-30s %-10s\n", "Código", "Nome", "Preço");
 
-        // Separador
-        System.out.println("---------------------------------------------");
+            // Separador
+            System.out.println("---------------------------------------------");
 
-        // Percorre a lista de produtos
-        for (Produto produto : produtos) {
-            // Exibe os dados do produto com boa formatação
-            System.out.printf("%-10d %-30s %-10.2f\n",
-                    produto.getCodigoProduto(),
-                    produto.getNome(),
-                    produto.getPreco());
+            // Percorre a lista de produtos
+            for (Produto produto : produtos) {
+                // Exibe os dados do produto com boa formatação
+                System.out.printf("%-10d %-30s %-10.2f\n",
+                        produto.getCodigoProduto(),
+                        produto.getNome(),
+                        produto.getPreco());
+            }
+        } else {
+            System.err.println("Nenhum produto existente, crie um!");
         }
     }
 
     public void deletarProduto(){
-        try {
-            int inputCodigoProduto = inputCodigoProdutoExistente();
-            if (inputCodigoProduto != -1) {
-                bancoObjetos.deletarProduto(inputCodigoProduto);
-                System.out.println("Sucesso");
+        if (!bancoObjetos.getProdutos().isEmpty()) {
+            try {
+                int inputCodigoProduto = inputCodigoProdutoExistente();
+                if (inputCodigoProduto != -1) {
+                    bancoObjetos.deletarProduto(inputCodigoProduto);
+                    System.out.println("Sucesso");
+                }
+            } catch (NullPointerException e) {
+                System.err.println(e.getMessage());
             }
-        } catch (NullPointerException e) {
-            System.err.println(e.getMessage());
+        } else {
+            System.err.println("Não existe nehum produto");
         }
     }
 
@@ -187,18 +195,22 @@ public class OperacoesObjetos {
     }
 
     public void listarClientes() {
-        System.out.println("Lista de clientes:\n");
-        ArrayList<Cliente> clientes = bancoObjetos.getClientes();
+        if (!bancoObjetos.getClientes().isEmpty()) {
+            System.out.println("Lista de clientes:\n");
+            ArrayList<Cliente> clientes = bancoObjetos.getClientes();
 
-        System.out.printf("%-20s %-30s %-30s %-60s\n", "CPF/CNPJ", "Nome", "Email", "Endereco");
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.printf("%-20s %-30s %-30s %-60s\n", "CPF/CNPJ", "Nome", "Email", "Endereco");
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
 
-        for (Cliente cliente : clientes) {
-            System.out.printf("%-20s %-30s %-30s %-60s\n",
-                    cliente.getCPF_CNPJ(),
-                    cliente.getNome(),
-                    cliente.getEmail(),
-                    cliente.getEndereco());
+            for (Cliente cliente : clientes) {
+                System.out.printf("%-20s %-30s %-30s %-60s\n",
+                        cliente.getCPF_CNPJ(),
+                        cliente.getNome(),
+                        cliente.getEmail(),
+                        cliente.getEndereco());
+            }
+        } else {
+            System.err.println("Não existe nenhum cliente, crie um!");
         }
     }
 
@@ -255,16 +267,20 @@ public class OperacoesObjetos {
     }
 
     public void listarQuantidades(){
-        System.out.printf("%-20s %-10s %-10s%n", "Produto", "Preço", "Quantidade");
-        System.out.println("--------------------------------------------------");
+        if (!bancoObjetos.getEstoques().isEmpty()) {
+            System.out.printf("%-20s %-10s %-10s%n", "Produto", "Preço", "Quantidade");
+            System.out.println("--------------------------------------------------");
 
-        // Dados da tabela
-        for (Estoque e : bancoObjetos.getEstoques()) {
-            Produto prod = e.getProduto();
-            System.out.printf("%-20s R$ %-8.2f %-10d%n",
-                    prod.getNome(),
-                    prod.getPreco(),
-                    e.getQuantidade());
+            // Dados da tabela
+            for (Estoque e : bancoObjetos.getEstoques()) {
+                Produto prod = e.getProduto();
+                System.out.printf("%-20s R$ %-8.2f %-10d%n",
+                        prod.getNome(),
+                        prod.getPreco(),
+                        e.getQuantidade());
+            }
+        } else {
+            System.err.println("Não existe nenhum estoque registrado");
         }
     }
 
