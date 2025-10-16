@@ -1,16 +1,20 @@
 package menu;
 
+import servicos.ServicoCliente;
+import servicos.ServicoProduto;
+
 import java.util.Scanner;
 
 public class Principal {
-    private static Scanner entrada = new Scanner(System.in);
-    private static OperacoesObjetos operacoes = new OperacoesObjetos();
+    private static final Scanner entrada = new Scanner(System.in);
+    private static final OperacoesObjetos operacoes = new OperacoesObjetos();
+    private static final BancoObjetos bancoObjetos = new BancoObjetos();
 
-    private static final char MENU_PRODUTOS = 'p';
-    private static final char MENU_CLIENTES = 'c';
-    private static final char MENU_ESTOQUE = 'e';
-    private static final char MENU_VENDAS = 'v';
+    //Serviços das emtidades
+    private static final ServicoCliente servicoCliente = new ServicoCliente(bancoObjetos, entrada);
+    private static ServicoProduto servicoProduto = new ServicoProduto(bancoObjetos, entrada);
 
+    //Valores constantes
     private static final char OPCAO_CRIAR = 'c';
     private static final char OPCAO_LISTAR = 'l';
     private static final char OPCAO_DELETAR = 'd';
@@ -24,7 +28,10 @@ public class Principal {
 
     private static void menuPrincipal() {
         boolean sair = false;
-
+        final char MENU_PRODUTOS = 'p';
+        final char MENU_CLIENTES = 'c';
+        final char MENU_ESTOQUE = 'e';
+        final char MENU_VENDAS = 'v';
 
         while (!sair){
             System.out.println("""
@@ -73,16 +80,16 @@ public class Principal {
 
         switch (opcaoChar){
             case OPCAO_CRIAR:
-                operacoes.criarProduto();
+                servicoProduto.criarProduto();
                 break;
             case OPCAO_BUSCAR:
-                operacoes.buscarProduto();
+                servicoProduto.buscarProduto();
                 break;
             case OPCAO_LISTAR:
-                operacoes.listarProdutos();
+                servicoProduto.listarProdutos();
                 break;
             case OPCAO_DELETAR:
-                operacoes.deletarProduto();
+                servicoProduto.deletarProduto();
                 break;
             default:
                 menuPrincipal();
@@ -103,10 +110,10 @@ public class Principal {
 
         switch (opcaoChar){
             case OPCAO_CRIAR:
-                operacoes.criarCliente();
+                servicoCliente.criarCliente();
                 break;
             case OPCAO_LISTAR:
-                operacoes.listarClientes();
+                servicoCliente.listarClientes();
                 break;
             case OPCAO_DELETAR:
                 System.out.println("Menu em construção");
