@@ -1,22 +1,11 @@
 package entidades;
 
 public class Cliente {
-    private String CPF_CNPJ;
     private String nome;
     private String email;
     private String endereco;
 
-    public Cliente(String CPF_CNPJ, String nome, String email, String endereco) {
-        if (!isCpfCnpjValid(CPF_CNPJ)){
-            throw new IllegalArgumentException("CPF ou CNPJ inválido, deve ser igual ou maior que 8 caracteres");
-        }
-        if (!isNomeValid(nome)){
-            throw new IllegalArgumentException("Nome inválido, deve ser entre 3 e 50 caracteres");
-        }
-        if (!isEnderecoValid(endereco)){
-            throw new IllegalArgumentException("Endereço Inválido, deve ser de 30 caracteres pra frente");
-        }
-        this.CPF_CNPJ = CPF_CNPJ;
+    public Cliente(String nome, String email, String endereco) {
         this.nome = nome;
         this.email = email;
         this.endereco = endereco;
@@ -41,10 +30,6 @@ public class Cliente {
             return false;
         }
         return true;
-    }
-
-    public String getCPF_CNPJ() {
-        return CPF_CNPJ;
     }
 
     public String getNome() {
