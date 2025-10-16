@@ -1,11 +1,10 @@
 package menu;
 
-import entidades.Cliente;
-import entidades.Estoque;
-import entidades.Produto;
+import entidades.*;
 
 import java.util.ArrayList;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class BancoObjetos {
     private ArrayList<Produto> produtos;
@@ -13,13 +12,9 @@ public class BancoObjetos {
     private ArrayList<Estoque> estoques;
 
     public BancoObjetos() {
-        this.produtos = new ArrayList<Produto>();
-        this.clientes = new ArrayList<Cliente>();
-        this.estoques = new ArrayList<Estoque>();
-    }
-
-    public BancoObjetos(ArrayList<Produto> produtos) {
-        this.produtos = produtos;
+        this.produtos = new ArrayList<>();
+        this.clientes = new ArrayList<>();
+        this.estoques = new ArrayList<>();
     }
 
     //Operacoes Produtos
@@ -35,16 +30,6 @@ public class BancoObjetos {
             System.err.println("Erro tentando deletar o produto no banco:" + e.getMessage());
         }
     }
-
-//    public void editarProduto(int codProduto, Produto produto){
-//        try {
-//            produto.setCodigoProduto(codProduto);
-//            int index = this.produtos.indexOf(getProdutoById(codProduto));
-//            produtos.set(index, produto);
-//        } catch (IndexOutOfBoundsException e) {
-//            System.err.println("Erro tentando editar o produto no banco:" + e.getMessage());
-//        }
-//    }
 
     public ArrayList<Produto> getProdutos(){
         return produtos;
@@ -71,12 +56,26 @@ public class BancoObjetos {
         clientes.add(cliente);
     }
 
-    public void deletarCliente(int index){
-        clientes.remove(index);
-    }
-
     public ArrayList<Cliente> getClientes(){
         return clientes;
+    }
+
+    public ArrayList<ClienteJuridico> getClientesJuridicos(){
+        ArrayList<ClienteJuridico> clienteJuridicos = clientes.stream()
+                .filter(cliente -> cliente instanceof ClienteJuridico)
+                .map(cliente -> (ClienteJuridico) cliente)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return clienteJuridicos;
+    }
+
+    public ArrayList<ClienteFisico> getClientesFisicos(){
+        ArrayList<ClienteFisico> clientesFisicos = clientes.stream()
+                .filter(cliente -> cliente instanceof ClienteFisico)
+                .map(cliente -> (ClienteFisico) cliente)
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        return clientesFisicos;
     }
 
     //Operacoes estoque
