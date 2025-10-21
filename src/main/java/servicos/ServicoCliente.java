@@ -4,53 +4,31 @@ import entidades.Cliente;
 import entidades.ClienteFisico;
 import entidades.ClienteJuridico;
 import menu.BancoObjetos;
+import validadores.ValidadoresCliente;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+/**
+ * Classe encarregada de gerenciar métodos referente a clientes
+ **/
 public class ServicoCliente {
-    BancoObjetos bancoObjetos;
-    Scanner entrada;
+    private static final int OPCAO_PESSOA_FISICA = 1;
+    private static final int OPCAO_PESSOA_JURIDICA = 2;
+
+    private final BancoObjetos bancoObjetos;
+    private final Scanner entrada;
 
     public ServicoCliente(BancoObjetos bancoObjetos, Scanner entrada) {
         this.bancoObjetos = bancoObjetos;
         this.entrada = entrada;
     }
 
-    private boolean isAlpha(String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
-        for (char c : str.toCharArray()) {
-            if (!Character.isLetter(c) && !Character.isWhitespace(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isCpfCnpjValid(String CPF_CNPJ){
-        return CPF_CNPJ.length() <= 8;
-    }
-
-    private boolean isNomeValid(String nome){
-        if (nome.length() < 3 || nome.length() > 50){
-            return false;
-        }
-        if (!isAlpha(nome)){
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isEnderecoValid(String endereco){
-        return endereco.length() <= 30;
-    }
-
+    /**
+     * Coleta dados do usuário e cria um novo cliente
+     * @return Cliente criado (ClienteFisico ou ClienteJuridico)
+     */
     private Cliente inputClienteUsuario() {
-        final int OPCAO_P_FISICA = 1;
-        final int OPCAO_P_JURIDICA = 2;
-
         int tipoCliente = solicitarTipoCliente();
 
         String nome = solicitarNome(tipoCliente);
@@ -58,15 +36,19 @@ public class ServicoCliente {
         String endereco = solicitarEndereco();
         String email = solicitarEmail();
 
-        if (tipoCliente == OPCAO_P_FISICA) {
+        if (tipoCliente == OPCAO_PESSOA_FISICA) {
             return new ClienteFisico(cpfCnpj, nome, email, endereco);
-        } else if (tipoCliente == OPCAO_P_JURIDICA){
+        } else if (tipoCliente == OPCAO_PESSOA_JURIDICA) {
             return new ClienteJuridico(cpfCnpj, nome, email, endereco);
         } else {
-            throw new IllegalArgumentException("Aconteceu um erro tentando pegar o tipo de cliente tentando criar um cliente novo");
+            throw new IllegalArgumentException("Tipo de cliente inválido: " + tipoCliente);
         }
     }
 
+    /**
+     * Solicita ao usuário o tipo de cliente (Pessoa Física ou Jurídica)
+     * @return 1 para Pessoa Física, 2 para Pessoa Jurídica
+     */
     private int solicitarTipoCliente() {
         while (true) {
             try {
@@ -78,7 +60,7 @@ public class ServicoCliente {
                 int opcao = entrada.nextInt();
                 entrada.nextLine(); // consume newline
 
-                if (opcao == 1 || opcao == 2) {
+                if (opcao == OPCAO_PESSOA_FISICA || opcao == OPCAO_PESSOA_JURIDICA) {
                     return opcao;
                 }
                 System.err.println("Opção inválida. Digite 1 ou 2.");
@@ -89,47 +71,75 @@ public class ServicoCliente {
         }
     }
 
+    /**
+     * Solicita o nome do cliente (pessoa ou empresa)
+     * @param tipoCliente Tipo do cliente (1 = Física, 2 = Jurídica)
+     * @return Nome validado
+     */
     private String solicitarNome(int tipoCliente) {
-        String prompt = (tipoCliente == 1) ? "Digite seu nome: " : "Digite o nome da Empresa: ";
+        String prompt = (tipoCliente == OPCAO_PESSOA_FISICA)
+                ? "Digite seu nome: "
+                : "Digite o nome da Empresa: ";
 
         while (true) {
             System.out.print(prompt);
             String nome = entrada.nextLine().trim();
 
-            if (isNomeValid(nome)) {
+            if (ValidadoresCliente.isNomeValido(nome)) {
                 return nome;
             }
-            System.err.println("Nome inválido. Tente novamente.");
+            System.err.println("Nome inválido. Deve ter entre 3 e 50 caracteres e conter apenas letras.");
         }
     }
 
+    /**
+     * Solicita o CPF ou CNPJ do cliente
+     * @param tipoCliente Tipo do cliente (1 = Física, 2 = Jurídica)
+     * @return CPF ou CNPJ validado
+     */
     private String solicitarCpfCnpj(int tipoCliente) {
-        String prompt = (tipoCliente == 1) ? "Digite seu CPF: " : "Digite o CNPJ da empresa: ";
-        String tipoDoc = (tipoCliente == 1) ? "CPF" : "CNPJ";
+        String prompt = (tipoCliente == OPCAO_PESSOA_FISICA)
+                ? "Digite seu CPF (11 dígitos): "
+                : "Digite o CNPJ da empresa (14 dígitos): ";
+        String tipoDoc = (tipoCliente == OPCAO_PESSOA_FISICA) ? "CPF" : "CNPJ";
+        String requisito = (tipoCliente == OPCAO_PESSOA_FISICA) ? "11 dígitos" : "14 dígitos";
 
         while (true) {
             System.out.print(prompt);
             String documento = entrada.nextLine().trim();
 
-            if (isCpfCnpjValid(documento)) {
-                return documento;
+            boolean valido = (tipoCliente == OPCAO_PESSOA_FISICA)
+                    ? ValidadoresCliente.isCpfValido(documento)
+                    : ValidadoresCliente.isCnpjValido(documento);
+
+            if (valido) {
+                // Remove caracteres não numéricos para armazenar
+                return documento.replaceAll("[^0-9]", "");
             }
-            System.err.println(tipoDoc + " inválido. Deve ter menos de 8 caracteres. Tente novamente.");
+            System.err.println(tipoDoc + " inválido. Deve conter " + requisito + ". Tente novamente.");
         }
     }
 
+    /**
+     * Solicita o endereço do cliente
+     * @return Endereço validado
+     */
     private String solicitarEndereco() {
         while (true) {
             System.out.print("Digite o endereço: ");
             String endereco = entrada.nextLine().trim();
 
-            if (isEnderecoValid(endereco)) {
+            if (ValidadoresCliente.isEnderecoValido(endereco)) {
                 return endereco;
             }
-            System.err.println("Endereço inválido. Deve ter menos de 30 caracteres. Tente novamente.");
+            System.err.println("Endereço inválido. Deve ter entre 1 e 100 caracteres. Tente novamente.");
         }
     }
 
+    /**
+     * Pergunta ao usuário se deseja informar email e coleta o mesmo
+     * @return Email informado ou string vazia
+     */
     private String solicitarEmail() {
         while (true) {
             try {
@@ -141,8 +151,7 @@ public class ServicoCliente {
                 char opcao = entrada.nextLine().trim().toLowerCase().charAt(0);
 
                 if (opcao == 's') {
-                    System.out.print("Digite o e-mail: ");
-                    return entrada.nextLine().trim();
+                    return solicitarEmailInput();
                 } else if (opcao == 'n') {
                     System.out.println("Criando usuário sem e-mail...");
                     return "";
@@ -155,46 +164,99 @@ public class ServicoCliente {
         }
     }
 
+    /**
+     * Solicita e valida o email do usuário
+     * @return Email validado
+     */
+    private String solicitarEmailInput() {
+        while (true) {
+            System.out.print("Digite o e-mail: ");
+            String email = entrada.nextLine().trim();
+
+            if (ValidadoresCliente.isEmailValido(email)) {
+                return email;
+            }
+            System.err.println("E-mail inválido. Deve estar no formato correto (exemplo@dominio.com).");
+        }
+    }
+
+    /**
+     * Cria um novo cliente e adiciona ao banco de objetos
+     */
     public void criarCliente() {
         Cliente inputCliente = inputClienteUsuario();
         bancoObjetos.adicionarCliente(inputCliente);
-        System.out.println("Sucesso");
+        System.out.println("Cliente criado com sucesso!");
     }
 
+    /**
+     * Lista todos os clientes cadastrados (Jurídicos e Físicos)
+     */
     public void listarClientes() {
-        if (bancoObjetos.getClientes().isEmpty()){
-            System.err.println("Nenhum cliente criado");
+        if (bancoObjetos.getClientes().isEmpty()) {
+            System.err.println("Nenhum cliente cadastrado.");
             return;
         }
 
-        // List Clientes Jurídicos
-        if(!bancoObjetos.getClientesJuridicos().isEmpty()){
+        // Listar Clientes Jurídicos
+        if (!bancoObjetos.getClientesJuridicos().isEmpty()) {
             System.out.println("\n=== CLIENTES JURÍDICOS ===");
             System.out.printf("%-20s %-30s %-30s %-60s\n", "CNPJ", "Nome Empresa", "Email", "Endereço");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
 
             for (ClienteJuridico cliente : bancoObjetos.getClientesJuridicos()) {
                 System.out.printf("%-20s %-30s %-30s %-60s\n",
-                        cliente.getCNPJ(),
+                        formatarCnpj(cliente.getCNPJ()),
                         cliente.getNome(),
-                        cliente.getEmail(),
+                        cliente.getEmail().isEmpty() ? "Não informado" : cliente.getEmail(),
                         cliente.getEndereco());
             }
         }
 
-        // List Clientes Físicos
-        if(!bancoObjetos.getClientesFisicos().isEmpty()){
+        // Listar Clientes Físicos
+        if (!bancoObjetos.getClientesFisicos().isEmpty()) {
             System.out.println("\n=== CLIENTES FÍSICOS ===");
             System.out.printf("%-20s %-30s %-30s %-60s\n", "CPF", "Nome", "Email", "Endereço");
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
 
             for (ClienteFisico cliente : bancoObjetos.getClientesFisicos()) {
                 System.out.printf("%-20s %-30s %-30s %-60s\n",
-                        cliente.getCPF(),
+                        formatarCpf(cliente.getCPF()),
                         cliente.getNome(),
-                        cliente.getEmail(),
+                        cliente.getEmail().isEmpty() ? "Não informado" : cliente.getEmail(),
                         cliente.getEndereco());
             }
         }
+    }
+
+    /**
+     * Formata CPF para exibição (XXX.XXX.XXX-XX)
+     * @param cpf CPF sem formatação
+     * @return CPF formatado
+     */
+    private String formatarCpf(String cpf) {
+        if (cpf == null || cpf.length() != 11) {
+            return cpf;
+        }
+        return cpf.substring(0, 3) + "." +
+                cpf.substring(3, 6) + "." +
+                cpf.substring(6, 9) + "-" +
+                cpf.substring(9, 11);
+    }
+
+    /**
+     * Formata CNPJ para exibição (XX.XXX.XXX/XXXX-XX)
+     * @param cnpj CNPJ sem formatação
+     * @return CNPJ formatado
+     */
+    private String formatarCnpj(String cnpj) {
+        if (cnpj == null || cnpj.length() != 14) {
+            return cnpj;
+        }
+        return cnpj.substring(0, 2) + "." +
+                cnpj.substring(2, 5) + "." +
+                cnpj.substring(5, 8) + "/" +
+                cnpj.substring(8, 12) + "-" +
+                cnpj.substring(12, 14);
     }
 }

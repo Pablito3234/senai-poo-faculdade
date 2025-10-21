@@ -1,18 +1,19 @@
 package menu;
 
 import servicos.ServicoCliente;
+import servicos.ServicoEstoque;
 import servicos.ServicoProduto;
 
 import java.util.Scanner;
 
 public class Principal {
     private static final Scanner entrada = new Scanner(System.in);
-    private static final OperacoesObjetos operacoes = new OperacoesObjetos();
     private static final BancoObjetos bancoObjetos = new BancoObjetos();
 
     //Serviços das emtidades
     private static final ServicoCliente servicoCliente = new ServicoCliente(bancoObjetos, entrada);
-    private static ServicoProduto servicoProduto = new ServicoProduto(bancoObjetos, entrada);
+    private static final ServicoProduto servicoProduto = new ServicoProduto(bancoObjetos, entrada);
+    private static final ServicoEstoque servicoEstoque = new ServicoEstoque(bancoObjetos, entrada);
 
     //Valores constantes
     private static final char OPCAO_CRIAR = 'c';
@@ -139,16 +140,16 @@ public class Principal {
 
         switch (opcaoChar){
             case OPCAO_CRIAR:
-                operacoes.criarEstoque();
+                servicoEstoque.criarEstoque();
                 break;
             case OPCAO_QUANTIDADE:
-                operacoes.quantidadeProduto();
+                servicoEstoque.quantidadeProduto();
                 break;
             case OPCAO_LISTAR:
-                operacoes.listarQuantidades();
+                servicoEstoque.listarQuantidades();
                 break;
             case OPCAO_EDITAR:
-                operacoes.editarQuantidade();
+                servicoEstoque.editarQuantidade();
                 break;
             default:
                 menuPrincipal();

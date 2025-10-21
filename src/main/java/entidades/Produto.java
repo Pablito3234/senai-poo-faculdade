@@ -8,27 +8,9 @@ public class Produto {
     private Float preco;
 
     public Produto(Float preco, String nome, Integer codigoProduto) {
-        if (!isNomeValido(nome)){
-            throw new IllegalArgumentException("Nome Invalido");
-        }
-        if (!isPrecoValido(preco)){
-            throw new IllegalArgumentException("Preco Invalido");
-        }
         this.nome = nome;
         this.preco = preco;
         this.codigoProduto = codigoProduto;
-    }
-
-    private static boolean isNomeValido(String nome){
-        if(nome.isEmpty()) return false;
-        if(nome.length() < 4) return false;
-        if(!nome.matches("^[A-Za-z ]+$")) return false;
-        return true;
-    }
-
-    private static boolean isPrecoValido(Float preco){
-        if (preco < 1.0 || preco > 10000.0) return false;
-        return true;
     }
 
     public Integer getCodigoProduto() {
@@ -37,10 +19,6 @@ public class Produto {
 
     public String getNome() {
         return nome;
-    }
-
-    public void setCodigoProduto(Integer codigoProduto) {
-        this.codigoProduto = codigoProduto;
     }
 
     public Float getPreco() {
