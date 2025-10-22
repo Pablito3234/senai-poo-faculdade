@@ -35,23 +35,11 @@ public class ValidadoresProduto {
      * @param preco Preço do produto a ser validado
      * @return true se válido, false se não
      */
-    public static boolean isPrecoValido(Float preco) {
+    public static boolean isPrecoValido(Long preco) {
         if (preco == null) {
             return false;
         }
         return preco >= PRECO_MINIMO && preco <= PRECO_MAXIMO;
-    }
-
-    /**
-     * Validador de código do produto
-     * @param codigo Código do produto a ser validado
-     * @return true se válido, false se não
-     */
-    public static boolean isCodigoValido(Integer codigo) {
-        if (codigo == null) {
-            return false;
-        }
-        return codigo > 0 && codigo <= 99999;
     }
 
     /**

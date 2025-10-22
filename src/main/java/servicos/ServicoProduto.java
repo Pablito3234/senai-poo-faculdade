@@ -54,7 +54,7 @@ public class ServicoProduto {
      * @return Produto criado com dados validados
      */
     private Produto inputProdutoUsuario() {
-        Float preco = solicitarPreco();
+        Long preco = solicitarPreco();
         String nome = solicitarNome();
         Integer codigo = gerarCodigoProduto();
 
@@ -65,11 +65,11 @@ public class ServicoProduto {
      * Solicita e valida o preço do produto
      * @return Preço validado
      */
-    private Float solicitarPreco() {
+    private Long solicitarPreco() {
         while (true) {
             try {
                 System.out.print("Digite o preço do produto (R$): ");
-                Float preco = entrada.nextFloat();
+                Long preco = entrada.nextLong();
                 entrada.nextLine(); // consume newline
 
                 if (ValidadoresProduto.isPrecoValido(preco)) {

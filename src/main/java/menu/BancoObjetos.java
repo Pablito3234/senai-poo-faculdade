@@ -10,6 +10,7 @@ public class BancoObjetos {
     private ArrayList<Produto> produtos;
     private ArrayList<Cliente> clientes;
     private ArrayList<Estoque> estoques;
+    private ArrayList<Venda> vendas;
 
     public BancoObjetos() {
         this.produtos = new ArrayList<>();
@@ -132,5 +133,10 @@ public class BancoObjetos {
 
     public void criarEstoque(Integer quantidade, Produto produto){
         this.estoques.add(new Estoque(produto, quantidade));
+    }
+
+    //operacoes vendas
+    public void criarVenda(Venda venda){
+        this.vendas.add(venda);
     }
 }

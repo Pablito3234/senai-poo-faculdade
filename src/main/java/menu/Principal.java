@@ -4,6 +4,7 @@ import servicos.ServicoCliente;
 import servicos.ServicoEstoque;
 import servicos.ServicoProduto;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Principal {
@@ -155,5 +156,38 @@ public class Principal {
                 menuPrincipal();
                 break;
         }
+    }
+
+    private static void opcoesVendas(){
+        System.out.println("""
+                Este é o menu de vendas você escolha uma opção:
+                [1] Realizar uma venda
+                [2] Relatório de vendas
+                [3] Mostrar total de vendas
+                [4] Mostrar maior e menor venda
+                [9] Sair
+                """);
+
+        int opcao = 0;
+        try {
+            opcao = entrada.nextInt();
+        } catch (InputMismatchException e){
+            opcao = 9;
+        }
+
+        switch (opcao){
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3, 4:
+                System.out.println("Menu em construção");
+                opcoesVendas();
+                break;
+            default:
+                menuPrincipal();
+                break;
+        }
+        menuPrincipal();
     }
 }
