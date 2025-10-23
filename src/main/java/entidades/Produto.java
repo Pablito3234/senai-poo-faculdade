@@ -5,9 +5,9 @@ import java.util.Objects;
 public class Produto {
     private Integer codigoProduto;
     private String nome;
-    private Long preco;
+    private Double preco;
 
-    public Produto(Long preco, String nome, Integer codigoProduto) {
+    public Produto(Double preco, String nome, Integer codigoProduto) {
         this.nome = nome;
         this.preco = preco;
         this.codigoProduto = codigoProduto;
@@ -21,7 +21,7 @@ public class Produto {
         return nome;
     }
 
-    public Long getPreco() {
+    public Double getPreco() {
         return preco;
     }
 

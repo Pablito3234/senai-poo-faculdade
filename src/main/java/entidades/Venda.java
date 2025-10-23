@@ -1,7 +1,6 @@
 package entidades;
 
 import java.util.HashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Classe que representa uma venda
@@ -15,10 +14,11 @@ public class Venda {
         this.itensVenda = itensVenda;
     }
 
-    public long totalVenda(){
-        AtomicLong precoTotal = new AtomicLong();
-        this.itensVenda.forEach((produto, _) -> precoTotal.addAndGet(produto.getPreco()));
-        return precoTotal.get();
+    public Double totalVenda(){
+        return this.itensVenda.keySet()
+                .stream()
+                .mapToDouble(Produto::getPreco)
+                .sum();
     }
 
     public Integer getCodigoVenda() {
