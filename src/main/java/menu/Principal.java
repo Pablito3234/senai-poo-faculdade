@@ -28,44 +28,62 @@ public class Principal {
         menuPrincipal();
     }
 
+    private static int inputOpcaoMenu(){
+        while (true) {
+            try {
+                System.out.println("Digite uma opção");
+                int opcao = entrada.nextInt();
+                if (opcao < 1 || opcao > 9){
+                    System.err.println("Opção Invalida");
+                    continue;
+                }
+                return opcao;
+            } catch (InputMismatchException e){
+                System.err.println("Entrada inválida, digite um número");
+            }
+        }
+    }
+
     private static void menuPrincipal() {
         boolean sair = false;
-        final char MENU_PRODUTOS = 'p';
-        final char MENU_CLIENTES = 'c';
-        final char MENU_ESTOQUE = 'e';
-        final char MENU_VENDAS = 'v';
 
         while (!sair){
             System.out.println("""
-                    Digite uma opção
-                    [P]: Produtos
-                    [C]: Clientes
-                    [E]: Estoque
-                    [V]: Vendas
-                    [Qualquer outra coisa]: Sair
+                    =================
+                    Menu Principal
+                    =================
+                    
+                    [1]: Produtos
+                    [2]: Clientes
+                    [3]: Estoque
+                    [4]: Vendas
+                    [9]: Sair
                     """);
-            String opcao = entrada.nextLine().toLowerCase();
-            char opcaoChar = opcao.charAt(0);
+            int opcao = inputOpcaoMenu();
 
-            switch (opcaoChar) {
-                case MENU_PRODUTOS:
+            switch (opcao) {
+                case 1:
                     opcoesProduto();
                     break;
-                case MENU_CLIENTES:
+                case 2:
                     opcoesCliente();
                     break;
-                case MENU_ESTOQUE:
+                case 3:
                     opcoesEstoque();
                     break;
-                case MENU_VENDAS:
+                case 4:
                     opcoesVendas();
                     break;
                 default:
-                    System.out.println("Saindo");
+                    System.out.println("Saindo...");
                     sair = true;
                     break;
             }
         }
+    }
+
+    private static void opcoes(String modulo){
+
     }
 
     private static void opcoesProduto() {
