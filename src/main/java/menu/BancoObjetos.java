@@ -62,25 +62,23 @@ public class BancoObjetos {
     }
 
     public ArrayList<ClienteJuridico> getClientesJuridicos(){
-        ArrayList<ClienteJuridico> clienteJuridicos = clientes.stream()
+
+        return clientes.stream()
                 .filter(cliente -> cliente instanceof ClienteJuridico)
                 .map(cliente -> (ClienteJuridico) cliente)
                 .collect(Collectors.toCollection(ArrayList::new));
-
-        return clienteJuridicos;
     }
 
     public ArrayList<ClienteFisico> getClientesFisicos(){
-        ArrayList<ClienteFisico> clientesFisicos = clientes.stream()
+
+        return clientes.stream()
                 .filter(cliente -> cliente instanceof ClienteFisico)
                 .map(cliente -> (ClienteFisico) cliente)
                 .collect(Collectors.toCollection(ArrayList::new));
-
-        return clientesFisicos;
     }
 
     //Operacoes estoque
-    private Estoque getEstoqueByProduto(Produto produto){
+    public Estoque getEstoqueByProduto(Produto produto){
         for (Estoque estoque : this.estoques){
             if (estoque.getProduto().equals(produto)){
                 return estoque;
@@ -89,7 +87,7 @@ public class BancoObjetos {
         return null;
     }
 
-    private Estoque getEstoqueByProduto(Integer id){
+    public Estoque getEstoqueByProduto(Integer id){
         for (Estoque estoque : this.estoques){
             if (estoque.getProduto().getCodigoProduto().equals(id)){
                 return estoque;
@@ -138,5 +136,20 @@ public class BancoObjetos {
     //operacoes vendas
     public void criarVenda(Venda venda){
         this.vendas.add(venda);
+    }
+
+    public boolean existeCodigoVenda(Integer codigo){
+        return this.vendas.stream().anyMatch(
+                venda -> venda.getCodigoVenda().equals(codigo)
+        );
+    }
+
+    public Venda getVendaByCodigo(Integer codigo){
+        for (Venda venda : this.vendas){
+            if (venda.getCodigoVenda().equals(codigo)){
+                return venda;
+            }
+        }
+        return null;
     }
 }

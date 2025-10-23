@@ -49,16 +49,16 @@ public class Principal {
 
             switch (opcaoChar) {
                 case MENU_PRODUTOS:
-                    opcoesCrudProduto();
+                    opcoesProduto();
                     break;
                 case MENU_CLIENTES:
-                    opcoesCrudCliente();
+                    opcoesCliente();
                     break;
                 case MENU_ESTOQUE:
                     opcoesEstoque();
                     break;
                 case MENU_VENDAS:
-                    System.out.println("Menu em construção");
+                    opcoesVendas();
                     break;
                 default:
                     System.out.println("Saindo");
@@ -68,7 +68,7 @@ public class Principal {
         }
     }
 
-    private static void opcoesCrudProduto() {
+    private static void opcoesProduto() {
         System.out.println("""
                 Digite uma opção
                 [C]: Criar novo produto
@@ -99,7 +99,7 @@ public class Principal {
         }
     }
 
-    private static void opcoesCrudCliente(){
+    private static void opcoesCliente(){
         System.out.println("""
                 Digite uma opção
                 [C]: Criar

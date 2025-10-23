@@ -36,4 +36,9 @@ public class Produto {
     public int hashCode() {
         return Objects.hashCode(getCodigoProduto());
     }
+
+    @Override
+    public String toString() {
+        return nome + ": " + preco.toString();
+    }
 }

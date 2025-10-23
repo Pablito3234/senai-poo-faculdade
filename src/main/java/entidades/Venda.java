@@ -20,4 +20,8 @@ public class Venda {
         this.itensVenda.forEach((produto, _) -> precoTotal.addAndGet(produto.getPreco()));
         return precoTotal.get();
     }
+
+    public Integer getCodigoVenda() {
+        return codigoVenda;
+    }
 }
