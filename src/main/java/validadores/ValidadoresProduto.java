@@ -35,7 +35,7 @@ public class ValidadoresProduto {
      * @param preco Preço do produto a ser validado
      * @return true se válido, false se não
      */
-    public static boolean isPrecoValido(Long preco) {
+    public static boolean isPrecoValido(Double preco) {
         if (preco == null) {
             return false;
         }

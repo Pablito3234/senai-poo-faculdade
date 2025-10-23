@@ -9,6 +9,8 @@ import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
+import static servicos.saida.ImpressoraComFormatacao.*;
+
 public class ServicoProduto {
     private static final int CODIGO_INVALIDO = -1;
     private static final int CODIGO_MAXIMO = 99999;
@@ -54,7 +56,7 @@ public class ServicoProduto {
      * @return Produto criado com dados validados
      */
     private Produto inputProdutoUsuario() {
-        Long preco = solicitarPreco();
+        Double preco = solicitarPreco();
         String nome = solicitarNome();
         Integer codigo = gerarCodigoProduto();
 
@@ -65,11 +67,11 @@ public class ServicoProduto {
      * Solicita e valida o preço do produto
      * @return Preço validado
      */
-    private Long solicitarPreco() {
+    private Double solicitarPreco() {
         while (true) {
             try {
                 System.out.print("Digite o preço do produto (R$): ");
-                Long preco = entrada.nextLong();
+                Double preco = entrada.nextDouble();
                 entrada.nextLine(); // consume newline
 
                 if (ValidadoresProduto.isPrecoValido(preco)) {
@@ -140,23 +142,11 @@ public class ServicoProduto {
             Produto produtoAchado = bancoObjetos.getProdutoById(entradaCodigo);
 
             if (produtoAchado != null) {
-                exibirDetalhesProduto(produtoAchado);
+                System.out.println(exibirDetalhesProduto(produtoAchado));
             } else {
                 System.err.println("Erro ao recuperar o produto.");
             }
         }
-    }
-
-    /**
-     * Exibe os detalhes de um produto de forma formatada
-     * @param produto Produto a ser exibido
-     */
-    private void exibirDetalhesProduto(Produto produto) {
-        System.out.println("\n=== DETALHES DO PRODUTO ===");
-        System.out.printf("Código: %d\n", produto.getCodigoProduto());
-        System.out.printf("Nome: %s\n", produto.getNome());
-        System.out.printf("Preço: R$ %.2f\n", produto.getPreco());
-        System.out.println("===========================\n");
     }
 
     /**
@@ -205,7 +195,8 @@ public class ServicoProduto {
             Produto produto = bancoObjetos.getProdutoById(inputCodigoProduto);
 
             if (produto != null) {
-                System.out.printf("Tem certeza que deseja deletar o produto '%s'? (S/N): ", produto.getNome());
+                System.out.println(exibirDetalhesProduto(produto));
+                System.out.println("Tem certeza que deseja deletar o produto '%s'? (S/N)");
                 char confirmacao = entrada.nextLine().trim().toLowerCase().charAt(0);
 
                 if (confirmacao == 's') {

@@ -60,10 +60,10 @@ public class ServicoVendas {
 
             System.out.printf("""
                     Confirmar adicionar este produto?
-                    %s
+                    Nome: %s
                     Quantidade: %d
                     (s/n)
-                    """, produto, inputQuantidade);
+                    """, produto.getNome(), inputQuantidade);
             char opcao = entrada.nextLine().toLowerCase().charAt(0);
             if (opcao == 's'){
                 itens.put(produto, inputQuantidade);
