@@ -9,6 +9,8 @@ import validadores.ValidadoresCliente;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import static servicos.saida.ImpressoraComFormatacao.exibirDetalhesCliente;
+
 /**
  * Classe encarregada de gerenciar métodos referente a clientes
  **/
@@ -229,6 +231,30 @@ public class ServicoCliente {
         }
     }
 
+    public void deletarCliente(){
+        int tipoCliente = solicitarTipoCliente();
+        String cpfCnpj = solicitarCpfCnpj(tipoCliente);
+        Cliente clienteAchado = null;
+        switch (tipoCliente){
+            case 1 -> {
+                clienteAchado = bancoObjetos.getClienteByCpf(cpfCnpj);
+            }
+            case 2 -> {
+                clienteAchado = bancoObjetos.getClienteByCnpj(cpfCnpj);
+            }
+        }
+        if (clienteAchado == null){
+            System.err.println("Nenhum cliente achado com este documento");
+            return;
+        }
+
+        boolean confirmado = confirmarDelecao(clienteAchado);
+        if (confirmado){
+            bancoObjetos.deletarCliente(clienteAchado);
+            System.out.println("Sucesso");
+        }
+    }
+
     /**
      * Formata CPF para exibição (XXX.XXX.XXX-XX)
      * @param cpf CPF sem formatação
@@ -258,5 +284,28 @@ public class ServicoCliente {
                 cnpj.substring(5, 8) + "/" +
                 cnpj.substring(8, 12) + "-" +
                 cnpj.substring(12, 14);
+    }
+
+    private boolean confirmarDelecao(Cliente cliente){
+        System.out.printf("""
+                Deseja deletar este cliente?
+                %s
+                (S/N)
+                """, exibirDetalhesCliente(cliente));
+        try {
+            char confimacao = entrada.nextLine().toLowerCase().charAt(0);
+            if (confimacao == 's'){
+                return true;
+            } else if (confimacao == 'n'){
+                System.out.println("Cancelando");
+                return false;
+            } else {
+                System.err.println("Entrada invalida, cancelando deleção...");
+                return false;
+            }
+        } catch (InputMismatchException e) {
+            System.err.println("Entrada invalida, cancelando deleção...");
+            return false;
+        }
     }
 }
