@@ -1,5 +1,8 @@
 package servicos.saida;
 
+import entidades.Cliente;
+import entidades.ClienteFisico;
+import entidades.ClienteJuridico;
 import entidades.Produto;
 
 public class ImpressoraComFormatacao extends Impressora{
@@ -16,10 +19,25 @@ public class ImpressoraComFormatacao extends Impressora{
     }
 
     public static String exibirDetalhesProduto(Produto produto){
-        return "\n=== DETALHES DO PRODUTO ===" +
+        return "\n=== DETALHES DO PRODUTO ===\n" +
                 String.format("Código: %d\n", produto.getCodigoProduto()) +
                 String.format("Nome: %s\n", produto.getNome()) +
                 String.format("Preço: R$ %.2f\n", produto.getPreco()) +
                 "===========================\n";
+    }
+
+    public static String exibirDetalhesCliente(Cliente cliente){
+        String documento = "";
+        try {
+            ClienteFisico clienteFisico = (ClienteFisico) cliente;
+            documento = "CPF: " + clienteFisico.getCPF();
+        } catch (ClassCastException e){
+            ClienteJuridico clienteJuridico = (ClienteJuridico) cliente;
+            documento = "CNPJ: " + clienteJuridico.getCNPJ();
+        }
+
+        return "\n=== DETALHES DO CLIENTE ===\n" +
+                String.format("%s\n", documento) +
+                String.format("Nome: %s\n", cliente.getNome());
     }
 }
