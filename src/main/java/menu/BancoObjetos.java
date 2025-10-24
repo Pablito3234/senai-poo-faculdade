@@ -3,6 +3,7 @@ package menu;
 import entidades.*;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -75,6 +76,24 @@ public class BancoObjetos {
                 .filter(cliente -> cliente instanceof ClienteFisico)
                 .map(cliente -> (ClienteFisico) cliente)
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public ClienteFisico getClienteByCpf(String cpf){
+        Optional<ClienteFisico> cliente =  getClientesFisicos().stream()
+                .filter(clienteFisico -> clienteFisico.getCPF().equals(cpf))
+                .findFirst();
+        return cliente.orElse(null);
+    }
+
+    public ClienteJuridico getClienteByCnpj(String cnpj){
+        Optional<ClienteJuridico> cliente =  getClientesJuridicos().stream()
+                .filter(clienteFisico -> clienteFisico.getCNPJ().equals(cnpj))
+                .findFirst();
+        return cliente.orElse(null);
+    }
+
+    public void deletarCliente(Cliente cliente){
+        this.clientes.remove(cliente);
     }
 
     //Operacoes estoque
