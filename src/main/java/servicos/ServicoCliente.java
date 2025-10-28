@@ -6,10 +6,12 @@ import entidades.ClienteJuridico;
 import menu.BancoObjetos;
 import validadores.ValidadoresCliente;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import static servicos.saida.ImpressoraComFormatacao.exibirDetalhesCliente;
+import static servicos.saida.ImpressoraComFormatacao.*;
+import servicos.saida.ImpressoraComFormatacao;
 
 /**
  * Classe encarregada de gerenciar métodos referente a clientes
@@ -20,6 +22,7 @@ public class ServicoCliente {
 
     private final BancoObjetos bancoObjetos;
     private final Scanner entrada;
+    private final ImpressoraComFormatacao impressora = new ImpressoraComFormatacao();
 
     public ServicoCliente(BancoObjetos bancoObjetos, Scanner entrada) {
         this.bancoObjetos = bancoObjetos;
@@ -33,7 +36,7 @@ public class ServicoCliente {
     private Cliente inputClienteUsuario() {
         int tipoCliente = solicitarTipoCliente();
 
-        String nome = solicitarNome(tipoCliente);
+        String nome = solicitarNome();
         String cpfCnpj = solicitarCpfCnpj(tipoCliente);
         String endereco = solicitarEndereco();
         String email = solicitarEmail();
@@ -75,16 +78,11 @@ public class ServicoCliente {
 
     /**
      * Solicita o nome do cliente (pessoa ou empresa)
-     * @param tipoCliente Tipo do cliente (1 = Física, 2 = Jurídica)
      * @return Nome validado
      */
-    private String solicitarNome(int tipoCliente) {
-        String prompt = (tipoCliente == OPCAO_PESSOA_FISICA)
-                ? "Digite seu nome: "
-                : "Digite o nome da Empresa: ";
-
+    private String solicitarNome() {
         while (true) {
-            System.out.print(prompt);
+            System.out.print("Digite o nome: ");
             String nome = entrada.nextLine().trim();
 
             if (ValidadoresCliente.isNomeValido(nome)) {
@@ -195,40 +193,7 @@ public class ServicoCliente {
      * Lista todos os clientes cadastrados (Jurídicos e Físicos)
      */
     public void listarClientes() {
-        if (bancoObjetos.getClientes().isEmpty()) {
-            System.err.println("Nenhum cliente cadastrado.");
-            return;
-        }
-
-        // Listar Clientes Jurídicos
-        if (!bancoObjetos.getClientesJuridicos().isEmpty()) {
-            System.out.println("\n=== CLIENTES JURÍDICOS ===");
-            System.out.printf("%-20s %-30s %-30s %-60s\n", "CNPJ", "Nome Empresa", "Email", "Endereço");
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
-
-            for (ClienteJuridico cliente : bancoObjetos.getClientesJuridicos()) {
-                System.out.printf("%-20s %-30s %-30s %-60s\n",
-                        formatarCnpj(cliente.getCNPJ()),
-                        cliente.getNome(),
-                        cliente.getEmail().isEmpty() ? "Não informado" : cliente.getEmail(),
-                        cliente.getEndereco());
-            }
-        }
-
-        // Listar Clientes Físicos
-        if (!bancoObjetos.getClientesFisicos().isEmpty()) {
-            System.out.println("\n=== CLIENTES FÍSICOS ===");
-            System.out.printf("%-20s %-30s %-30s %-60s\n", "CPF", "Nome", "Email", "Endereço");
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------");
-
-            for (ClienteFisico cliente : bancoObjetos.getClientesFisicos()) {
-                System.out.printf("%-20s %-30s %-30s %-60s\n",
-                        formatarCpf(cliente.getCPF()),
-                        cliente.getNome(),
-                        cliente.getEmail().isEmpty() ? "Não informado" : cliente.getEmail(),
-                        cliente.getEndereco());
-            }
-        }
+        System.out.println(clientesFormatados(bancoObjetos.getClientes()));
     }
 
     public void deletarCliente(){
@@ -252,6 +217,48 @@ public class ServicoCliente {
         if (confirmado){
             bancoObjetos.deletarCliente(clienteAchado);
             System.out.println("Sucesso");
+        }
+    }
+
+    public void buscarCliente() {
+        try {
+            System.out.println("""
+                    Deseja buscar o cliente por documento ou nome?
+                    1 - Documento (CPF/CNPJ)
+                    2 - Nome
+                    """);
+
+            int opcao = entrada.nextInt();
+            entrada.nextLine(); // consume newline
+
+            ArrayList<Cliente> encontrados = null;
+
+            switch (opcao) {
+                case 1 -> {
+                    String documento = solicitarCpfCnpj(solicitarTipoCliente());
+                    encontrados = bancoObjetos.getClientesByDocumento(documento);
+                }
+                case 2 -> {
+                    String nome = solicitarNome();
+                    encontrados = bancoObjetos.getClientesByNome(nome);
+                }
+                default -> {
+                    impressora.imprimir("Opção inválida");
+                    return;
+                }
+            }
+
+            // Evita duplicação: a parte comum vai aqui
+            if (encontrados == null || encontrados.isEmpty()) {
+                impressora.imprimir("Nenhum cliente encontrado.");
+                return;
+            }
+
+            clientesFormatados(encontrados);
+
+        } catch (InputMismatchException e) {
+            System.err.println("Entrada inválida, só use números");
+            entrada.nextLine(); // limpa entrada inválida
         }
     }
 
@@ -291,7 +298,7 @@ public class ServicoCliente {
                 Deseja deletar este cliente?
                 %s
                 (S/N)
-                """, exibirDetalhesCliente(cliente));
+                """, detalhesClienteFormatado(cliente));
         try {
             char confimacao = entrada.nextLine().toLowerCase().charAt(0);
             if (confimacao == 's'){

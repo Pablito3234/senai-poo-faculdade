@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BancoObjetos {
     private ArrayList<Produto> produtos;
@@ -90,6 +91,23 @@ public class BancoObjetos {
                 .filter(clienteFisico -> clienteFisico.getCNPJ().equals(cnpj))
                 .findFirst();
         return cliente.orElse(null);
+    }
+
+    public ArrayList<Cliente> getClientesByNome(String nome){
+
+        return (ArrayList<Cliente>) getClientes().stream()
+                .filter(cliente -> cliente.getNome().equals(nome))
+                .toList();
+    }
+
+    public ArrayList<Cliente> getClientesByDocumento(String documento) {
+        return Stream.concat(
+                        getClientesJuridicos().stream()
+                                .filter(c -> c.getCNPJ().equals(documento)),
+                        getClientesFisicos().stream()
+                                .filter(c -> c.getCPF().equals(documento))
+                )
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void deletarCliente(Cliente cliente){

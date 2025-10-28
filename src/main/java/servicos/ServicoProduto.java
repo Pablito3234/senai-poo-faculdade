@@ -142,7 +142,7 @@ public class ServicoProduto {
             Produto produtoAchado = bancoObjetos.getProdutoById(entradaCodigo);
 
             if (produtoAchado != null) {
-                System.out.println(exibirDetalhesProduto(produtoAchado));
+                System.out.println(detalhesProduto(produtoAchado));
             } else {
                 System.err.println("Erro ao recuperar o produto.");
             }
@@ -195,7 +195,7 @@ public class ServicoProduto {
             Produto produto = bancoObjetos.getProdutoById(inputCodigoProduto);
 
             if (produto != null) {
-                System.out.println(exibirDetalhesProduto(produto));
+                System.out.println(detalhesProduto(produto));
                 System.out.println("Tem certeza que deseja deletar o produto '%s'? (S/N)");
                 char confirmacao = entrada.nextLine().trim().toLowerCase().charAt(0);
 

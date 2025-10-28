@@ -43,9 +43,10 @@ public class Principal {
                 """);
         put("clientes", """
                 Digite uma opção
-                [1]: Criar
-                [2]: Listar
-                [3]: Deletar
+                [1]: Criar novo cliente
+                [2]: Listar todos os clientes
+                [3]: Buscar Cliente
+                [4]: Deletar Cliente
                 [9]: Voltar
                 """);
         put("estoque", """
@@ -77,7 +78,8 @@ public class Principal {
         put("clientes", Map.of(
                 1, servicoCliente::criarCliente,
                 2, servicoCliente::listarClientes,
-                3, servicoCliente::deletarCliente
+                3, servicoCliente::buscarCliente,
+                4, servicoCliente::deletarCliente
         ));
         put("estoque", Map.of(
                 1, servicoEstoque::criarEstoque,
