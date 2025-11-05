@@ -18,6 +18,7 @@ public class BancoObjetos {
         this.produtos = new ArrayList<>();
         this.clientes = new ArrayList<>();
         this.estoques = new ArrayList<>();
+        this.vendas = new ArrayList<>();
     }
 
     //Operacoes Produtos
@@ -188,5 +189,9 @@ public class BancoObjetos {
             }
         }
         return null;
+    }
+
+    public ArrayList<Venda> getVendas(){
+        return this.vendas;
     }
 }

@@ -1,9 +1,6 @@
 package servicos.saida;
 
-import entidades.Cliente;
-import entidades.ClienteFisico;
-import entidades.ClienteJuridico;
-import entidades.Produto;
+import entidades.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -129,5 +126,17 @@ public class ImpressoraComFormatacao extends Impressora{
                 cnpj.substring(5, 8) + "/" +
                 cnpj.substring(8, 12) + "-" +
                 cnpj.substring(12, 14);
+    }
+
+    public static String relatorioVendas(ArrayList<Venda> vendas){
+        StringBuilder sb = new StringBuilder();
+        sb.append("========= Relatorio Produtos ========\n");
+        for (Venda venda : vendas){
+            sb.append("Codigo de venda ").append(venda.getCodigoVenda()).append(":\n");
+            for (var entry : venda.getItensVenda().entrySet()){
+                sb.append(String.format("Nome: %s\nPreço Unitario: %.2f\nQuantidade: %d\n\n", entry.getKey().getNome(), entry.getKey().getPreco(), entry.getValue()));
+            }
+        }
+        return sb.toString();
     }
 }

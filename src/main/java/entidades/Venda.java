@@ -1,5 +1,6 @@
 package entidades;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -21,7 +22,15 @@ public class Venda {
                 .sum();
     }
 
+    public int totalIten(){
+        return this.itensVenda.size();
+    }
+
     public Integer getCodigoVenda() {
         return codigoVenda;
+    }
+
+    public HashMap<Produto, Integer> getItensVenda() {
+        return itensVenda;
     }
 }

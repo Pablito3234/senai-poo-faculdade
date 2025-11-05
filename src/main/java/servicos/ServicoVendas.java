@@ -4,11 +4,11 @@ import entidades.Estoque;
 import entidades.Produto;
 import entidades.Venda;
 import menu.BancoObjetos;
+import servicos.saida.ImpressoraComFormatacao;
 
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.Random;
-import java.util.Scanner;
+import static servicos.saida.ImpressoraComFormatacao.*;
+
+import java.util.*;
 
 public class ServicoVendas {
     private final BancoObjetos bancoObjetos;
@@ -30,6 +30,38 @@ public class ServicoVendas {
         System.out.println("Sucesso ao registrar nova venda");
     }
 
+    public void mostrarRelatorio(){
+        if (bancoObjetos.getVendas().isEmpty()){
+            System.out.println("Não tem vendas no banco");
+            return;
+        }
+        System.out.println(relatorioVendas(bancoObjetos.getVendas()));
+    }
+
+    public void totalVendas(){
+        System.out.println("A quantidade de vendas é de: "+bancoObjetos.getVendas().size()+"\n");
+    }
+
+    public void maiorMenorVenda(){
+        ArrayList<Venda> vendas = bancoObjetos.getVendas();
+
+        Optional<Venda> maiorVenda = vendas.stream().max(Comparator.comparing(Venda::totalVenda));
+
+        if (maiorVenda.isPresent()){
+            System.out.println("A maior venda é de: "+maiorVenda.get().totalVenda());
+        } else {
+            System.err.println("Nenhuma venda registrado");;
+        }
+
+        Optional<Venda> menorVenda = vendas.stream().min(Comparator.comparing(Venda::totalVenda));
+
+        if (menorVenda.isPresent()){
+            System.out.println("A maior venda é de: "+menorVenda.get().totalVenda());
+        } else {
+            System.err.println("Nenhuma venda registrado");;
+        }
+    }
+
     private Integer gerarCodigoVenda(){
         Random random = new Random();
         while (true){
@@ -42,7 +74,7 @@ public class ServicoVendas {
     }
 
     private HashMap<Produto, Integer> inputItens(){
-        HashMap<Produto, Integer> itens = null;
+        HashMap<Produto, Integer> itens = new HashMap<>();
         while (true){
             Integer inputCodigo = inputCodigoProduto();
             if (inputCodigo == null){
@@ -53,6 +85,7 @@ public class ServicoVendas {
                 System.err.println("Erro interno, produto não achado");
                 continue;
             }
+
             Integer inputQuantidade = inputQuantidade(produto);
             if (inputQuantidade == null){
                 continue;
@@ -91,6 +124,7 @@ public class ServicoVendas {
         System.out.println("Digite um codigo de produto a ser adicionado na venda");
         try {
             int codigo = entrada.nextInt();
+            entrada.nextLine();
             if (!bancoObjetos.existeCodigoPrduto(codigo)){
                 System.err.println("Código de produto não existe no banco");
                 return null;
@@ -102,22 +136,44 @@ public class ServicoVendas {
             return codigo;
         } catch (InputMismatchException e){
             System.err.println("Entrada inválida, digite numeros");
-            inputCodigoProduto();
+            entrada.nextLine();
+            return null;
         }
-        System.err.println("Aconteceu um erro inesperado: inputCodigoProduto() saiu do bloco try catch");
-        return null;
     }
+
+//    private Venda inputCodigoVenda(){
+//        System.out.println("Digite um codigo de venda");
+//        try {
+//            int codigo = entrada.nextInt();
+//            entrada.nextLine();
+//
+//            Venda venda = bancoObjetos.getVendaByCodigo(codigo);
+//
+//            if (venda == null){
+//                System.err.println("Este codigo não existe");
+//                return null;
+//            }
+//
+//            return venda;
+//
+//        } catch (InputMismatchException e) {
+//            System.err.println("Entrada inválida só digite numeros");
+//            entrada.nextLine();
+//            return null;
+//        }
+//    }
 
     private Integer inputQuantidade(Produto produto){
         System.out.println("Digite a quantidade do produto");
         try {
             Integer quantidade = entrada.nextInt();
+            entrada.nextLine();
             if (quantidade < 1){
                 System.err.println("Quantidade invalida, compre ao menos um");
                 return null;
             }
             Estoque estoqueProdutoAtual = bancoObjetos.getEstoqueByProduto(produto);
-            if (estoqueProdutoAtual.getQuantidade() > quantidade){
+            if (quantidade > estoqueProdutoAtual.getQuantidade()){
                 System.err.println("Quantidade no estoque insuficiente para este produto, só temos " + estoqueProdutoAtual.getQuantidade());
                 inputQuantidade(produto);
             }

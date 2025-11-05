@@ -19,7 +19,7 @@ public class Principal {
     private static final ServicoCliente servicoCliente = new ServicoCliente(bancoObjetos, entrada);
     private static final ServicoProduto servicoProduto = new ServicoProduto(bancoObjetos, entrada);
     private static final ServicoEstoque servicoEstoque = new ServicoEstoque(bancoObjetos, entrada);
-    // private static final ServicoVendas servicoVendas = new ServicoVendas(bancoObjetos, entrada);
+     private static final ServicoVendas servicoVendas = new ServicoVendas(bancoObjetos, entrada);
 
     private static final Map<String, String> prompts = new HashMap<>() {{
         put("principal", """
@@ -87,13 +87,12 @@ public class Principal {
                 3, servicoEstoque::listarQuantidades,
                 4, servicoEstoque::editarQuantidade
         ));
-        // Descomente quando ServicoVendas estiver implementado
-        // put("vendas", Map.of(
-        //         1, () -> servicoVendas.realizarVenda(),
-        //         2, () -> servicoVendas.relatorioVendas(),
-        //         3, () -> servicoVendas.totalVendas(),
-        //         4, () -> servicoVendas.maiorMenorVenda()
-        // ));
+         put("vendas", Map.of(
+                 1, servicoVendas::registrarVenda,
+                 2, servicoVendas::mostrarRelatorio,
+                 3, servicoVendas::totalVendas,
+                 4, servicoVendas::maiorMenorVenda
+         ));
     }};
 
     public static void main(String[] args) {
