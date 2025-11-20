@@ -1,5 +1,7 @@
 package menu;
 
+import entidades.ThrowingRunnable;
+import excecoes.NegocioException;
 import servicos.ServicoCliente;
 import servicos.ServicoEstoque;
 import servicos.ServicoProduto;
@@ -9,7 +11,7 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.function.Consumer;
+import java.util.concurrent.Callable;
 
 public class Principal {
     private static final Scanner entrada = new Scanner(System.in);
@@ -68,7 +70,7 @@ public class Principal {
     }};
 
     // Mapa de ações para cada módulo
-    private static final Map<String, Map<Integer, Runnable>> acoes = new HashMap<>() {{
+    private static final Map<String, Map<Integer, ThrowingRunnable>> acoes = new HashMap<>() {{
         put("produtos", Map.of(
                 1, servicoProduto::criarProduto,
                 2, servicoProduto::listarProdutos,
@@ -126,8 +128,8 @@ public class Principal {
             int opcao = inputOpcaoMenu();
 
             switch (opcao) {
-                case 1 -> executarModulo("produtos");
-                case 2 -> executarModulo("clientes");
+                case 1 -> moduloProduto();
+                case 2 -> moduloCliente();
                 case 3 -> executarModulo("estoque");
                 case 4 -> executarModulo("vendas");
                 case 9 -> {
@@ -149,7 +151,7 @@ public class Principal {
             if (opcao == 9) {
                 voltar = true;
             } else {
-                Map<Integer, Runnable> acoesModulo = acoes.get(modulo);
+                Map<Integer, ThrowingRunnable> acoesModulo = acoes.get(modulo);
 
                 if (acoesModulo != null && acoesModulo.containsKey(opcao)) {
                     try {
@@ -162,5 +164,53 @@ public class Principal {
                 }
             }
         }
+    }
+
+    private static void moduloCliente(){
+        boolean voltar = false;
+        while (!voltar){
+            System.out.println(prompts.get("clientes"));
+            int opcao = inputOpcaoMenu();
+            try{
+                switch (opcao) {
+                    case 1 -> servicoCliente.criarCliente();
+                    case 2 -> servicoCliente.listarClientes();
+                    case 3 -> servicoCliente.buscarCliente();
+                    case 4 -> servicoCliente.deletarCliente();
+                    case 9 -> voltar = true;
+                    default -> System.err.println("Opção Invalida");
+                }
+            } catch (NegocioException e){
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void moduloProduto(){
+        boolean voltar = false;
+        while (!voltar){
+            System.out.println(prompts.get("produtos"));
+            int opcao = inputOpcaoMenu();
+            try{
+                switch (opcao) {
+                    case 1 -> servicoProduto.criarProduto();
+                    case 2 -> servicoProduto.listarProdutos();
+                    case 3 -> servicoProduto.buscarProduto();
+                    case 4 -> servicoProduto.deletarProduto();
+                    case 9 -> voltar = true;
+                    default -> System.err.println("Opção Invalida");
+                }
+            } catch (NegocioException e){
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+
+    private static void moduloEstoque(){
+
+    }
+
+    private static void moduloVendas(){
+
     }
 }

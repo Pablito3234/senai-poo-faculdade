@@ -1,6 +1,7 @@
 package servicos;
 
 import entidades.Produto;
+import excecoes.NegocioException;
 import menu.BancoObjetos;
 import validadores.ValidadoresProduto;
 
@@ -27,27 +28,28 @@ public class ServicoProduto {
      * Solicita ao usuário um código de produto existente
      * @return Código do produto ou -1 se inválido/não encontrado
      */
-    private int inputCodigoProdutoExistente() {
+    private int inputCodigoProdutoExistente() throws NegocioException {
         try {
             System.out.print("Digite o código do produto: ");
             int inputCodigo = entrada.nextInt();
-            entrada.nextLine(); // consume newline
+            entrada.nextLine();
 
             if (bancoObjetos.getProdutos().isEmpty()) {
-                System.err.println("Não existe nenhum produto registrado.");
-                return CODIGO_INVALIDO;
+//                System.err.println("Não existe nenhum produto registrado.");
+//                return CODIGO_INVALIDO;
+                throw new NegocioException("Não existe nenhum produto registrado.");
             }
 
             if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
-                System.err.println("Produto com código " + inputCodigo + " não encontrado.");
-                return CODIGO_INVALIDO;
+//                System.err.println("Produto com código " + inputCodigo + " não encontrado.");
+//                return CODIGO_INVALIDO;
+                throw new NegocioException("Produto com código " + inputCodigo + " não encontrado.");
             }
 
             return inputCodigo;
         } catch (InputMismatchException e) {
-            System.err.println("Entrada inválida. Digite um número.");
-            entrada.nextLine(); // clear buffer
-            return CODIGO_INVALIDO;
+            entrada.nextLine();
+            throw new NegocioException("Entrada inválida. Digite um número.");
         }
     }
 
@@ -55,7 +57,7 @@ public class ServicoProduto {
      * Coleta dados do produto do usuário com validação
      * @return Produto criado com dados validados
      */
-    private Produto inputProdutoUsuario() {
+    private Produto inputProdutoUsuario() throws NegocioException{
         Double preco = solicitarPreco();
         String nome = solicitarNome();
         Integer codigo = gerarCodigoProduto();
@@ -67,7 +69,7 @@ public class ServicoProduto {
      * Solicita e valida o preço do produto
      * @return Preço validado
      */
-    private Double solicitarPreco() {
+    private Double solicitarPreco() throws NegocioException{
         while (true) {
             try {
                 System.out.print("Digite o preço do produto (R$): ");
@@ -78,7 +80,7 @@ public class ServicoProduto {
                     return preco;
                 }
 
-                System.err.println(ValidadoresProduto.getMensagemErroPreco());
+                throw new NegocioException(ValidadoresProduto.getMensagemErroPreco());
 
             } catch (InputMismatchException e) {
                 System.err.println("Entrada inválida. Digite um número decimal (use vírgula).");
@@ -91,17 +93,15 @@ public class ServicoProduto {
      * Solicita e valida o nome do produto
      * @return Nome validado
      */
-    private String solicitarNome() {
-        while (true) {
-            System.out.print("Digite o nome do produto: ");
-            String nome = entrada.nextLine().trim();
+    private String solicitarNome() throws NegocioException{
+        System.out.print("Digite o nome do produto: ");
+        String nome = entrada.nextLine().trim();
 
-            if (ValidadoresProduto.isNomeValido(nome)) {
-                return nome;
-            }
-
-            System.err.println(ValidadoresProduto.getMensagemErroNome());
+        if (ValidadoresProduto.isNomeValido(nome)) {
+            return nome;
         }
+
+        throw new NegocioException(ValidadoresProduto.getMensagemErroNome());
     }
 
     /**
@@ -122,20 +122,16 @@ public class ServicoProduto {
     /**
      * Cria um novo produto e adiciona ao banco de objetos
      */
-    public void criarProduto() {
-        try {
-            Produto produtoUsuario = inputProdutoUsuario();
-            bancoObjetos.adicionarProduto(produtoUsuario);
-            System.out.println("Produto criado com sucesso! Código: " + produtoUsuario.getCodigoProduto());
-        } catch (Exception e) {
-            System.err.println("Erro ao criar produto: " + e.getMessage());
-        }
+    public void criarProduto() throws NegocioException{
+        Produto produtoUsuario = inputProdutoUsuario();
+        bancoObjetos.adicionarProduto(produtoUsuario);
+        System.out.println("Produto criado com sucesso! Código: " + produtoUsuario.getCodigoProduto());
     }
 
     /**
      * Busca e exibe um produto pelo código
      */
-    public void buscarProduto() {
+    public void buscarProduto() throws NegocioException{
         int entradaCodigo = inputCodigoProdutoExistente();
 
         if (entradaCodigo != CODIGO_INVALIDO) {
@@ -178,7 +174,7 @@ public class ServicoProduto {
     /**
      * Deleta um produto do banco de objetos
      */
-    public void deletarProduto() {
+    public void deletarProduto() throws NegocioException{
         if (bancoObjetos.getProdutos().isEmpty()) {
             System.err.println("Não existe nenhum produto cadastrado. Crie um primeiro!");
             return;

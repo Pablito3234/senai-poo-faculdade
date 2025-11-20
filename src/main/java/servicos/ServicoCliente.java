@@ -3,6 +3,7 @@ package servicos;
 import entidades.Cliente;
 import entidades.ClienteFisico;
 import entidades.ClienteJuridico;
+import excecoes.NegocioException;
 import menu.BancoObjetos;
 import validadores.ValidadoresCliente;
 
@@ -33,7 +34,7 @@ public class ServicoCliente {
      * Coleta dados do usuário e cria um novo cliente
      * @return Cliente criado (ClienteFisico ou ClienteJuridico)
      */
-    private Cliente inputClienteUsuario() {
+    private Cliente inputClienteUsuario() throws NegocioException {
         int tipoCliente = solicitarTipoCliente();
 
         String nome = solicitarNome();
@@ -54,7 +55,7 @@ public class ServicoCliente {
      * Solicita ao usuário o tipo de cliente (Pessoa Física ou Jurídica)
      * @return 1 para Pessoa Física, 2 para Pessoa Jurídica
      */
-    private int solicitarTipoCliente() {
+    private int solicitarTipoCliente(){
         while (true) {
             try {
                 System.out.println("""
@@ -80,16 +81,14 @@ public class ServicoCliente {
      * Solicita o nome do cliente (pessoa ou empresa)
      * @return Nome validado
      */
-    private String solicitarNome() {
-        while (true) {
-            System.out.print("Digite o nome: ");
-            String nome = entrada.nextLine().trim();
+    private String solicitarNome() throws NegocioException {
+        System.out.print("Digite o nome: ");
+        String nome = entrada.nextLine().trim();
 
-            if (ValidadoresCliente.isNomeValido(nome)) {
-                return nome;
-            }
-            System.err.println("Nome inválido. Deve ter entre 3 e 50 caracteres e conter apenas letras.");
+        if (ValidadoresCliente.isNomeValido(nome)) {
+            return nome;
         }
+        throw new NegocioException("Nome inválido. Deve ter entre 3 e 50 caracteres e conter apenas letras.");
     }
 
     /**
@@ -97,27 +96,26 @@ public class ServicoCliente {
      * @param tipoCliente Tipo do cliente (1 = Física, 2 = Jurídica)
      * @return CPF ou CNPJ validado
      */
-    private String solicitarCpfCnpj(int tipoCliente) {
+    private String solicitarCpfCnpj(int tipoCliente) throws NegocioException{
         String prompt = (tipoCliente == OPCAO_PESSOA_FISICA)
                 ? "Digite seu CPF (11 dígitos): "
                 : "Digite o CNPJ da empresa (14 dígitos): ";
         String tipoDoc = (tipoCliente == OPCAO_PESSOA_FISICA) ? "CPF" : "CNPJ";
         String requisito = (tipoCliente == OPCAO_PESSOA_FISICA) ? "11 dígitos" : "14 dígitos";
 
-        while (true) {
-            System.out.print(prompt);
-            String documento = entrada.nextLine().trim();
+        System.out.print(prompt);
+        String documento = entrada.nextLine().trim();
 
-            boolean valido = (tipoCliente == OPCAO_PESSOA_FISICA)
-                    ? ValidadoresCliente.isCpfValido(documento)
-                    : ValidadoresCliente.isCnpjValido(documento);
+        boolean valido = (tipoCliente == OPCAO_PESSOA_FISICA)
+                ? ValidadoresCliente.isCpfValido(documento)
+                : ValidadoresCliente.isCnpjValido(documento);
 
-            if (valido) {
-                // Remove caracteres não numéricos para armazenar
-                return documento.replaceAll("[^0-9]", "");
-            }
-            System.err.println(tipoDoc + " inválido. Deve conter " + requisito + ". Tente novamente.");
+        if (valido) {
+            // Remove caracteres não numéricos para armazenar
+            return documento.replaceAll("[^0-9]", "");
         }
+        System.err.println(tipoDoc + " inválido. Deve conter " + requisito + ". Tente novamente.");
+        throw new NegocioException(tipoDoc + " inválido. Deve conter " + requisito + ". Tente novamente.");
     }
 
     /**
@@ -183,7 +181,7 @@ public class ServicoCliente {
     /**
      * Cria um novo cliente e adiciona ao banco de objetos
      */
-    public void criarCliente() {
+    public void criarCliente() throws NegocioException {
         Cliente inputCliente = inputClienteUsuario();
         bancoObjetos.adicionarCliente(inputCliente);
         System.out.println("Cliente criado com sucesso!");
@@ -196,7 +194,7 @@ public class ServicoCliente {
         System.out.println(clientesFormatados(bancoObjetos.getClientes()));
     }
 
-    public void deletarCliente(){
+    public void deletarCliente() throws NegocioException{
         int tipoCliente = solicitarTipoCliente();
         String cpfCnpj = solicitarCpfCnpj(tipoCliente);
         Cliente clienteAchado = null;
@@ -220,7 +218,7 @@ public class ServicoCliente {
         }
     }
 
-    public void buscarCliente() {
+    public void buscarCliente() throws NegocioException{
         try {
             System.out.println("""
                     Deseja buscar o cliente por documento ou nome?

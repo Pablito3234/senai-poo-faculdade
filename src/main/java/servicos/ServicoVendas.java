@@ -3,6 +3,7 @@ package servicos;
 import entidades.Estoque;
 import entidades.Produto;
 import entidades.Venda;
+import excecoes.NegocioException;
 import menu.BancoObjetos;
 import servicos.saida.ImpressoraComFormatacao;
 
@@ -19,10 +20,9 @@ public class ServicoVendas {
         this.entrada = entrada;
     }
 
-    public void registrarVenda(){
+    public void registrarVenda() throws NegocioException{
         if (bancoObjetos.getProdutos().isEmpty()){
-            System.out.println("Não existem produtos registrado para fazer uma venda. Cadatre um produto!");
-            return;
+            throw new NegocioException("Não existem produtos registrado para fazer uma venda. Cadatre um produto!");
         }
         HashMap<Produto, Integer> itensVenda = inputItens();
         Integer codigoAleatorio = gerarCodigoVenda();
@@ -30,10 +30,9 @@ public class ServicoVendas {
         System.out.println("Sucesso ao registrar nova venda");
     }
 
-    public void mostrarRelatorio(){
+    public void mostrarRelatorio() throws NegocioException{
         if (bancoObjetos.getVendas().isEmpty()){
-            System.out.println("Não tem vendas no banco");
-            return;
+            throw new NegocioException("Não tem vendas no banco");
         }
         System.out.println(relatorioVendas(bancoObjetos.getVendas()));
     }
@@ -73,23 +72,16 @@ public class ServicoVendas {
         }
     }
 
-    private HashMap<Produto, Integer> inputItens(){
+    private HashMap<Produto, Integer> inputItens() throws NegocioException {
         HashMap<Produto, Integer> itens = new HashMap<>();
         while (true){
             Integer inputCodigo = inputCodigoProduto();
-            if (inputCodigo == null){
-                continue;
-            }
             Produto produto = bancoObjetos.getProdutoById(inputCodigo);
             if (produto == null){
-                System.err.println("Erro interno, produto não achado");
-                continue;
+                throw new NegocioException("Erro interno, produto não achado");
             }
 
             Integer inputQuantidade = inputQuantidade(produto);
-            if (inputQuantidade == null){
-                continue;
-            }
 
             System.out.printf("""
                     Confirmar adicionar este produto?
@@ -120,24 +112,21 @@ public class ServicoVendas {
         return itens;
     }
 
-    private Integer inputCodigoProduto(){
+    private int inputCodigoProduto() throws NegocioException{
         System.out.println("Digite um codigo de produto a ser adicionado na venda");
         try {
             int codigo = entrada.nextInt();
             entrada.nextLine();
             if (!bancoObjetos.existeCodigoPrduto(codigo)){
-                System.err.println("Código de produto não existe no banco");
-                return null;
+                throw new NegocioException("Código de produto não existe no banco");
             }
             if (!bancoObjetos.existeEstoque(codigo)){
-                System.err.println("Não existe estoque para este produto ainda");
-                return null;
+                throw new NegocioException("Não existe estoque para este produto ainda");
             }
             return codigo;
         } catch (InputMismatchException e){
-            System.err.println("Entrada inválida, digite numeros");
             entrada.nextLine();
-            return null;
+            throw new NegocioException("Entrada inválida, digite numeros");
         }
     }
 
@@ -163,25 +152,21 @@ public class ServicoVendas {
 //        }
 //    }
 
-    private Integer inputQuantidade(Produto produto){
+    private Integer inputQuantidade(Produto produto) throws NegocioException{
         System.out.println("Digite a quantidade do produto");
         try {
-            Integer quantidade = entrada.nextInt();
+            int quantidade = entrada.nextInt();
             entrada.nextLine();
             if (quantidade < 1){
-                System.err.println("Quantidade invalida, compre ao menos um");
-                return null;
+                throw new NegocioException("Quantidade invalida, compre ao menos um");
             }
             Estoque estoqueProdutoAtual = bancoObjetos.getEstoqueByProduto(produto);
             if (quantidade > estoqueProdutoAtual.getQuantidade()){
-                System.err.println("Quantidade no estoque insuficiente para este produto, só temos " + estoqueProdutoAtual.getQuantidade());
-                inputQuantidade(produto);
+                throw new NegocioException("Quantidade no estoque insuficiente para este produto, só temos " + estoqueProdutoAtual.getQuantidade());
             }
             return quantidade;
         } catch (InputMismatchException e){
-            System.err.println("Entrada invalida, so digite numeros");
-            inputQuantidade(produto);
+            throw new NegocioException("Entrada invalida, so digite numeros");
         }
-        return null;
     }
 }

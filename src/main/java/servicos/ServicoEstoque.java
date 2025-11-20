@@ -2,6 +2,7 @@ package servicos;
 
 import entidades.Estoque;
 import entidades.Produto;
+import excecoes.NegocioException;
 import menu.BancoObjetos;
 
 import java.util.InputMismatchException;
@@ -16,50 +17,45 @@ public class ServicoEstoque {
         this.entrada = entrada;
     }
 
-    private int inputCodigoProdutoExistente() {
+    private int inputCodigoProdutoExistente() throws NegocioException {
         try {
             System.out.println("Digite um código de produto");
             int inputCodigo = entrada.nextInt();
             entrada.nextLine();
 
             if (bancoObjetos.getProdutos().isEmpty()) {
-                System.err.println("Não existe nenhum produto registrado");
-                return -1;
+                throw new NegocioException("Não existe nenhum produto registrado");
             }
 
             if (!bancoObjetos.existeCodigoPrduto(inputCodigo)) {
                 System.err.println("Produto não existe");
-                return -1;
+                throw new NegocioException("Produto não existe");
             }
             return inputCodigo;
         } catch (InputMismatchException e) {
-            System.err.println("Entrada inválida");
-            entrada.nextLine();
-            return -1;
+            throw new NegocioException("Entrada inválida, só digite número inteiro");
         }
     }
 
-    private Integer inputQuantidade(){
+    private Integer inputQuantidade() throws NegocioException{
         while (true){
             try {
                 System.out.println("Digite a quantidade do produto");
                 int inputUsuario = entrada.nextInt();
                 entrada.nextLine();
                 if (inputUsuario < 0){
-                    System.err.println("Valor não pode ser menor que zero");
-                    entrada.nextLine();
-                    continue;
+                    throw new NegocioException("Quantidade não pode ser menor que zero");
                 }
                 return inputUsuario;
             } catch (InputMismatchException exception) {
-                System.err.println("Entrada invalida");
                 entrada.nextLine();
+                throw new NegocioException("Entrada inválida, só digite número inteiro");
             }
         }
 
     }
 
-    public void criarEstoque() {
+    public void criarEstoque() throws NegocioException{
         if (bancoObjetos.getProdutos().isEmpty()) {
             System.err.println("Não existem produtos, crie um!");
             return;
@@ -84,7 +80,7 @@ public class ServicoEstoque {
         System.out.println("Estoque criado com sucesso");
     }
 
-    public void quantidadeProduto(){
+    public void quantidadeProduto() throws NegocioException{
         Integer entradaUsuarioCodProduto = inputCodigoProdutoExistente();
         if (entradaUsuarioCodProduto == -1) {
             return;
@@ -122,7 +118,7 @@ public class ServicoEstoque {
         }
     }
 
-    public void editarQuantidade(){
+    public void editarQuantidade() throws NegocioException{
         if (bancoObjetos.getProdutos().isEmpty()){
             System.err.println("Não existem produtos, crie um!");
             return;
