@@ -207,10 +207,42 @@ public class Principal {
     }
 
     private static void moduloEstoque(){
-
+        boolean voltar = false;
+        while (!voltar){
+            System.out.println(prompts.get("estoque"));
+            int opcao = inputOpcaoMenu();
+            try{
+                switch (opcao) {
+                    case 1 -> servicoEstoque.criarEstoque();
+                    case 2 -> servicoEstoque.quantidadeProduto();
+                    case 3 -> servicoEstoque.listarQuantidades();
+                    case 4 -> servicoEstoque.editarQuantidade();
+                    case 9 -> voltar = true;
+                    default -> System.err.println("Opção Invalida");
+                }
+            } catch (NegocioException e){
+                System.err.println(e.getMessage());
+            }
+        }
     }
 
     private static void moduloVendas(){
-
+        boolean voltar = false;
+        while (!voltar){
+            System.out.println(prompts.get("vendas"));
+            int opcao = inputOpcaoMenu();
+            try{
+                switch (opcao) {
+                    case 1 -> servicoVendas.registrarVenda();
+                    case 2 -> servicoVendas.mostrarRelatorio();
+                    case 3 -> servicoVendas.totalVendas();
+                    case 4 -> servicoVendas.maiorMenorVenda();
+                    case 9 -> voltar = true;
+                    default -> System.err.println("Opção Invalida");
+                }
+            } catch (NegocioException e){
+                System.err.println(e.getMessage());
+            }
+        }
     }
 }
